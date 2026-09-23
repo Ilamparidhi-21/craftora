@@ -4,6 +4,15 @@
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
 
+    {% if settings.favicon != blank %}
+      <link
+        rel="icon"
+        type="image/png"
+        href="{{ settings.favicon | image_url: width: 32, height: 32 }}"
+      >
+    {% endif %}
+
+
     {% comment %}
       Font preloading:
       1. Preconnect to font CDN for faster connection
