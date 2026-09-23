@@ -1,0 +1,799 @@
+{% comment %}
+  Boutique Contact Page
+{% endcomment %}
+
+<section
+  class="boutique-contact"
+  style="
+    --contact-bg: {{ section.settings.background_color }};
+    --contact-text: {{ section.settings.text_color }};
+    --contact-border: {{ section.settings.border_color }};
+    --contact-button-bg: {{ section.settings.button_background }};
+    --contact-button-text: {{ section.settings.button_text_color }};
+  "
+>
+
+  <div class="boutique-contact__inner">
+
+    <!-- LEFT SIDE -->
+    <div class="boutique-contact__intro">
+
+      {% if section.settings.eyebrow != blank %}
+        <p class="boutique-contact__eyebrow">
+          {{ section.settings.eyebrow }}
+        </p>
+      {% endif %}
+
+      <h1>
+        {% if section.settings.heading != blank %}
+          {{ section.settings.heading }}
+        {% else %}
+          {{ page.title }}
+        {% endif %}
+      </h1>
+
+      {% if section.settings.description != blank %}
+        <div class="boutique-contact__description">
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+
+      {% if page.content != blank %}
+        <div class="boutique-contact__page-content">
+          {{ page.content }}
+        </div>
+      {% endif %}
+
+
+      <!-- CONTACT DETAILS -->
+      <div class="boutique-contact__details">
+
+        {% if section.settings.info_heading != blank %}
+          <h2>
+            {{ section.settings.info_heading }}
+          </h2>
+        {% endif %}
+
+
+        {% if section.settings.email != blank %}
+
+          <div class="boutique-contact__detail">
+            <span>Email</span>
+
+            <a href="mailto:{{ section.settings.email }}">
+              {{ section.settings.email }}
+            </a>
+          </div>
+
+        {% endif %}
+
+
+        {% if section.settings.phone != blank %}
+
+          <div class="boutique-contact__detail">
+            <span>Phone</span>
+
+            <a href="tel:{{ section.settings.phone | remove: ' ' }}">
+              {{ section.settings.phone }}
+            </a>
+          </div>
+
+        {% endif %}
+
+
+        {% if section.settings.address != blank %}
+
+          <div class="boutique-contact__detail">
+            <span>Address</span>
+
+            <div>
+              {{ section.settings.address }}
+            </div>
+          </div>
+
+        {% endif %}
+
+
+        {% if section.settings.hours != blank %}
+
+          <div class="boutique-contact__detail">
+            <span>Customer Care</span>
+
+            <div>
+              {{ section.settings.hours }}
+            </div>
+          </div>
+
+        {% endif %}
+
+      </div>
+
+    </div>
+
+
+    <!-- RIGHT SIDE / FORM -->
+    <div class="boutique-contact__form-wrapper">
+
+      {% if section.settings.form_heading != blank %}
+        <h2>
+          {{ section.settings.form_heading }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.form_description != blank %}
+        <p class="boutique-contact__form-description">
+          {{ section.settings.form_description }}
+        </p>
+      {% endif %}
+
+
+      {% form 'contact', id: 'BoutiqueContactForm' %}
+
+        {% if form.posted_successfully? %}
+
+          <div
+            class="boutique-contact__success"
+            tabindex="-1"
+            autofocus
+          >
+            {{ section.settings.success_message }}
+          </div>
+
+        {% endif %}
+
+
+        {% if form.errors %}
+
+          <div class="boutique-contact__errors">
+            {{ form.errors | default_errors }}
+          </div>
+
+        {% endif %}
+
+
+        <div class="boutique-contact__field-row">
+
+          <div class="boutique-contact__field">
+
+            <label for="ContactName">
+              Name
+            </label>
+
+            <input
+              type="text"
+              id="ContactName"
+              name="contact[name]"
+              value="{% if form.name %}{{ form.name }}{% endif %}"
+              autocomplete="name"
+              placeholder="Your name"
+            >
+
+          </div>
+
+
+          <div class="boutique-contact__field">
+
+            <label for="ContactEmail">
+              Email <span aria-hidden="true">*</span>
+            </label>
+
+            <input
+              type="email"
+              id="ContactEmail"
+              name="contact[email]"
+              value="{% if form.email %}{{ form.email }}{% endif %}"
+              autocomplete="email"
+              spellcheck="false"
+              autocapitalize="off"
+              required
+              placeholder="you@example.com"
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="boutique-contact__field">
+
+          <label for="ContactPhone">
+            Phone
+          </label>
+
+          <input
+            type="tel"
+            id="ContactPhone"
+            name="contact[phone]"
+            value="{% if form.phone %}{{ form.phone }}{% endif %}"
+            autocomplete="tel"
+            placeholder="Phone number"
+          >
+
+        </div>
+
+
+        <div class="boutique-contact__field">
+
+          <label for="ContactMessage">
+            Message <span aria-hidden="true">*</span>
+          </label>
+
+          <textarea
+            id="ContactMessage"
+            name="contact[body]"
+            rows="7"
+            required
+            placeholder="How can we help?"
+          >{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="boutique-contact__submit"
+        >
+          {{ section.settings.button_label }}
+        </button>
+
+      {% endform %}
+
+    </div>
+
+  </div>
+
+</section>
+
+
+{% stylesheet %}
+
+.boutique-contact {
+  padding: 80px 25px 100px;
+
+  background: var(--contact-bg);
+  color: var(--contact-text);
+
+  box-sizing: border-box;
+}
+
+
+.boutique-contact__inner {
+  width: min(100%, 1300px);
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 0.85fr)
+    minmax(0, 1.15fr);
+
+  gap: clamp(60px, 8vw, 120px);
+}
+
+
+/* LEFT */
+
+.boutique-contact__intro {
+  padding-top: 15px;
+}
+
+
+.boutique-contact__eyebrow {
+  margin: 0 0 15px;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+}
+
+
+.boutique-contact__intro h1 {
+  margin: 0;
+
+  max-width: 550px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(50px, 6vw, 82px);
+
+  line-height: 0.98;
+
+  font-weight: 400;
+}
+
+
+.boutique-contact__description {
+  max-width: 500px;
+
+  margin-top: 25px;
+
+  font-size: 14px;
+
+  line-height: 1.75;
+
+  opacity: 0.7;
+}
+
+
+.boutique-contact__description p {
+  margin: 0;
+}
+
+
+.boutique-contact__page-content {
+  margin-top: 25px;
+
+  max-width: 500px;
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+
+/* DETAILS */
+
+.boutique-contact__details {
+  margin-top: 55px;
+
+  padding-top: 30px;
+
+  border-top:
+    1px solid var(--contact-border);
+}
+
+
+.boutique-contact__details h2 {
+  margin: 0 0 25px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 27px;
+
+  font-weight: 400;
+}
+
+
+.boutique-contact__detail {
+  display: grid;
+
+  grid-template-columns: 110px 1fr;
+
+  gap: 20px;
+
+  margin-bottom: 17px;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+.boutique-contact__detail > span {
+  font-size: 8px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+
+  opacity: 0.55;
+}
+
+
+.boutique-contact__detail a {
+  color: inherit;
+
+  text-decoration: none;
+}
+
+
+/* FORM */
+
+.boutique-contact__form-wrapper {
+  padding: clamp(35px, 5vw, 65px);
+
+  border:
+    1px solid var(--contact-border);
+
+  background: rgba(255,255,255,0.35);
+}
+
+
+.boutique-contact__form-wrapper h2 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(32px, 4vw, 45px);
+
+  font-weight: 400;
+}
+
+
+.boutique-contact__form-description {
+  margin:
+    12px
+    0
+    35px;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+
+  opacity: 0.65;
+}
+
+
+.boutique-contact__field-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+.boutique-contact__field {
+  margin-bottom: 22px;
+}
+
+
+.boutique-contact__field label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  font-size: 8px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+
+.boutique-contact__field input,
+.boutique-contact__field textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding:
+    14px
+    0;
+
+  border: 0;
+
+  border-bottom:
+    1px solid var(--contact-border);
+
+  border-radius: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  font: inherit;
+
+  font-size: 14px;
+
+  outline: none;
+}
+
+
+.boutique-contact__field textarea {
+  resize: vertical;
+
+  min-height: 145px;
+}
+
+
+.boutique-contact__field input:focus,
+.boutique-contact__field textarea:focus {
+  border-bottom-color:
+    var(--contact-text);
+}
+
+
+.boutique-contact__submit {
+  min-height: 52px;
+
+  margin-top: 8px;
+
+  padding:
+    0
+    32px;
+
+  border:
+    1px solid var(--contact-button-bg);
+
+  background:
+    var(--contact-button-bg);
+
+  color:
+    var(--contact-button-text);
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.boutique-contact__submit:hover {
+  background: transparent;
+
+  color: var(--contact-text);
+}
+
+
+/* MESSAGES */
+
+.boutique-contact__success {
+  margin-bottom: 25px;
+
+  padding: 15px 18px;
+
+  border:
+    1px solid var(--contact-border);
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+.boutique-contact__errors {
+  margin-bottom: 25px;
+
+  padding: 15px 18px;
+
+  border:
+    1px solid var(--contact-border);
+
+  font-size: 13px;
+}
+
+
+.boutique-contact__errors ul {
+  margin: 0;
+
+  padding-left: 20px;
+}
+
+
+/* TABLET */
+
+@media screen and (max-width: 900px) {
+
+  .boutique-contact__inner {
+    grid-template-columns: 1fr;
+
+    gap: 55px;
+  }
+
+}
+
+
+/* MOBILE */
+
+@media screen and (max-width: 600px) {
+
+  .boutique-contact {
+    padding:
+      50px
+      18px
+      70px;
+  }
+
+
+  .boutique-contact__intro h1 {
+    font-size: 48px;
+  }
+
+
+  .boutique-contact__form-wrapper {
+    padding:
+      30px
+      22px;
+  }
+
+
+  .boutique-contact__field-row {
+    grid-template-columns: 1fr;
+
+    gap: 0;
+  }
+
+
+  .boutique-contact__detail {
+    grid-template-columns: 1fr;
+
+    gap: 5px;
+  }
+
+
+  .boutique-contact__submit {
+    width: 100%;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Boutique contact",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "GET IN TOUCH"
+    },
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "We'd Love to Hear From You"
+    },
+
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Questions about an order, sizing or one of our pieces? Send us a message and our team will get back to you.</p>"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Contact information"
+    },
+
+    {
+      "type": "text",
+      "id": "info_heading",
+      "label": "Information heading",
+      "default": "Customer Care"
+    },
+
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email"
+    },
+
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone"
+    },
+
+    {
+      "type": "richtext",
+      "id": "address",
+      "label": "Address"
+    },
+
+    {
+      "type": "richtext",
+      "id": "hours",
+      "label": "Customer care hours"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Contact form"
+    },
+
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form heading",
+      "default": "Send a Message"
+    },
+
+    {
+      "type": "text",
+      "id": "form_description",
+      "label": "Form description",
+      "default": "Complete the form below and we'll be in touch."
+    },
+
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "SEND MESSAGE"
+    },
+
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you for contacting us. We'll be in touch shortly."
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#F7F4EF"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borders",
+      "default": "#D8D2C9"
+    },
+
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#FFFFFF"
+    }
+
+  ]
+}
+{% endschema %}

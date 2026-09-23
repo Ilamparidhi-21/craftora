@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "main": {
+      "type": "product",
+      "settings": {}
+    },
+    "related_products": {
+      "type": "boutique-related-products",
+      "settings": {
+        "eyebrow": "COMPLETE YOUR WARDROBE",
+        "heading": "You May Also Like",
+        "products_to_show": 4,
+        "show_view_all": true,
+        "background_color": "#F7F4EF",
+        "text_color": "#171717"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "related_products"
+  ]
+}

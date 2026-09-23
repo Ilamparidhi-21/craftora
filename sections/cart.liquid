@@ -1,0 +1,1536 @@
+{% comment %}
+  Boutique cart page
+{% endcomment %}
+
+<section
+  id="BoutiqueCart-{{ section.id }}"
+  class="boutique-cart-page"
+  style="
+    --cart-bg: {{ section.settings.background_color }};
+    --cart-text: {{ section.settings.text_color }};
+    --cart-border: {{ section.settings.border_color }};
+    --cart-panel: {{ section.settings.summary_background }};
+  "
+>
+
+  {% if cart.item_count == 0 %}
+
+    <div class="boutique-cart-empty">
+
+      <p class="boutique-cart-empty__eyebrow">
+        YOUR BAG
+      </p>
+
+      <h1>
+        Your bag is empty
+      </h1>
+
+      <p>
+        Discover something you'll love.
+      </p>
+
+      <a
+        href="{{ section.settings.continue_shopping_link | default: routes.all_products_collection_url }}"
+        class="boutique-cart-empty__button"
+      >
+        CONTINUE SHOPPING
+      </a>
+
+    </div>
+
+  {% else %}
+
+    <div class="boutique-cart-page__inner">
+
+      <!-- HEADER -->
+
+      <div class="boutique-cart-page__header">
+
+        <div>
+          <p class="boutique-cart-page__eyebrow">
+            YOUR BAG
+          </p>
+
+          <h1>
+            Shopping Bag
+          </h1>
+        </div>
+
+        <span>
+          {{ cart.item_count }}
+          {% if cart.item_count == 1 %}
+            ITEM
+          {% else %}
+            ITEMS
+          {% endif %}
+        </span>
+
+      </div>
+
+
+      {% if section.settings.show_shipping_progress %}
+
+        {% assign shipping_threshold = section.settings.free_shipping_threshold | times: 100 %}
+        {% assign shipping_remaining = shipping_threshold | minus: cart.total_price %}
+
+        <div class="boutique-cart-shipping">
+
+          {% if cart.total_price >= shipping_threshold %}
+
+            <p>
+              You've unlocked complimentary shipping.
+            </p>
+
+            <div class="boutique-cart-shipping__bar">
+              <span style="width: 100%;"></span>
+            </div>
+
+          {% else %}
+
+            {% assign shipping_percent = cart.total_price | times: 100 | divided_by: shipping_threshold %}
+
+            <p>
+              You're
+              <strong>{{ shipping_remaining | money }}</strong>
+              away from complimentary shipping.
+            </p>
+
+            <div class="boutique-cart-shipping__bar">
+              <span style="width: {{ shipping_percent }}%;"></span>
+            </div>
+
+          {% endif %}
+
+        </div>
+
+      {% endif %}
+
+
+      <form
+        action="{{ routes.cart_url }}"
+        method="post"
+        class="boutique-cart-form"
+      >
+
+        <div class="boutique-cart-layout">
+
+          <!-- CART ITEMS -->
+
+          <div class="boutique-cart-items">
+
+            <div class="boutique-cart-items__head">
+
+              <span>PRODUCT</span>
+
+              <span>QUANTITY</span>
+
+              <span>TOTAL</span>
+
+            </div>
+
+
+            {% for item in cart.items %}
+
+              <article class="boutique-cart-item">
+
+                <!-- IMAGE -->
+
+                <div class="boutique-cart-item__product">
+
+                  <a
+                    href="{{ item.url }}"
+                    class="boutique-cart-item__image"
+                  >
+
+                    {% if item.image != blank %}
+
+                      {{
+                        item.image
+                        | image_url: width: 500
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '160, 240, 360, 500',
+                          sizes: '140px'
+                      }}
+
+                    {% else %}
+
+                      {{ 'product-1' | placeholder_svg_tag }}
+
+                    {% endif %}
+
+                  </a>
+
+
+                  <!-- PRODUCT DETAILS -->
+
+                  <div class="boutique-cart-item__details">
+
+                    {% if section.settings.show_vendor and item.product.vendor != blank %}
+
+                      <p class="boutique-cart-item__vendor">
+                        {{ item.product.vendor }}
+                      </p>
+
+                    {% endif %}
+
+
+                    <a
+                      href="{{ item.url }}"
+                      class="boutique-cart-item__title"
+                    >
+                      {{ item.product.title }}
+                    </a>
+
+
+                    {% unless item.product.has_only_default_variant %}
+
+                      <div class="boutique-cart-item__variant">
+
+                        {% for option in item.options_with_values %}
+
+                          <span>
+                            {{ option.name }}:
+                            {{ option.value }}
+                          </span>
+
+                        {% endfor %}
+
+                      </div>
+
+                    {% endunless %}
+
+
+                    {% if item.properties.size > 0 %}
+
+                      <div class="boutique-cart-item__properties">
+
+                        {% for property in item.properties %}
+
+                          {% assign property_first_character = property.first | slice: 0 %}
+
+                          {% if property.last != blank and property_first_character != '_' %}
+
+                            <span>
+                              {{ property.first }}:
+                              {{ property.last }}
+                            </span>
+
+                          {% endif %}
+
+                        {% endfor %}
+
+                      </div>
+
+                    {% endif %}
+
+
+                    <div class="boutique-cart-item__unit-price">
+
+                      {% if item.original_price > item.final_price %}
+
+                        <span class="boutique-cart-item__sale-price">
+                          {{ item.final_price | money }}
+                        </span>
+
+                        <s>
+                          {{ item.original_price | money }}
+                        </s>
+
+                      {% else %}
+
+                        <span>
+                          {{ item.final_price | money }}
+                        </span>
+
+                      {% endif %}
+
+                    </div>
+
+
+                    {% if item.line_level_discount_allocations.size > 0 %}
+
+                      <div class="boutique-cart-item__discount">
+
+                        {% for discount_allocation in item.line_level_discount_allocations %}
+
+                          <span>
+                            {{ discount_allocation.discount_application.title }}
+                            -
+                            {{ discount_allocation.amount | money }}
+                          </span>
+
+                        {% endfor %}
+
+                      </div>
+
+                    {% endif %}
+
+
+                    <a
+                      href="{{ item.url_to_remove }}"
+                      class="boutique-cart-item__remove"
+                    >
+                      REMOVE
+                    </a>
+
+                  </div>
+
+                </div>
+
+
+                <!-- QUANTITY -->
+
+                <div class="boutique-cart-item__quantity-wrap">
+
+                  <div class="boutique-cart-quantity">
+
+                    <button
+                      type="button"
+                      data-cart-minus
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
+
+                    <input
+                      type="number"
+                      name="updates[{{ item.key }}]"
+                      value="{{ item.quantity }}"
+                      min="0"
+                      inputmode="numeric"
+                      aria-label="Quantity for {{ item.product.title | escape }}"
+                    >
+
+                    <button
+                      type="button"
+                      data-cart-plus
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+
+                  </div>
+
+                </div>
+
+
+                <!-- LINE TOTAL -->
+
+                <div class="boutique-cart-item__total">
+
+                  {% if item.original_line_price > item.final_line_price %}
+
+                    <span>
+                      {{ item.final_line_price | money }}
+                    </span>
+
+                    <s>
+                      {{ item.original_line_price | money }}
+                    </s>
+
+                  {% else %}
+
+                    <span>
+                      {{ item.final_line_price | money }}
+                    </span>
+
+                  {% endif %}
+
+                </div>
+
+              </article>
+
+            {% endfor %}
+
+
+            <div class="boutique-cart-items__actions">
+
+              <a
+                href="{{ section.settings.continue_shopping_link | default: routes.all_products_collection_url }}"
+              >
+                ← CONTINUE SHOPPING
+              </a>
+
+              <button
+                type="submit"
+                name="update"
+              >
+                UPDATE BAG
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- ORDER SUMMARY -->
+
+          <aside class="boutique-cart-summary">
+
+            <h2>
+              Order Summary
+            </h2>
+
+
+            {% if section.settings.show_cart_note %}
+
+              <details class="boutique-cart-note">
+
+                <summary>
+                  ADD AN ORDER NOTE
+                  <span>+</span>
+                </summary>
+
+                <textarea
+                  name="note"
+                  placeholder="Special instructions for your order"
+                >{{ cart.note }}</textarea>
+
+              </details>
+
+            {% endif %}
+
+
+            {% if cart.cart_level_discount_applications.size > 0 %}
+
+              <div class="boutique-cart-summary__discount">
+
+                {% for discount_application in cart.cart_level_discount_applications %}
+
+                  <div>
+
+                    <span>
+                      {{ discount_application.title }}
+                    </span>
+
+                    <span>
+                      −{{ discount_application.total_allocated_amount | money }}
+                    </span>
+
+                  </div>
+
+                {% endfor %}
+
+              </div>
+
+            {% endif %}
+
+
+            <div class="boutique-cart-summary__row">
+
+              <span>
+                Subtotal
+              </span>
+
+              <strong>
+                {{ cart.total_price | money }}
+              </strong>
+
+            </div>
+
+
+            <p class="boutique-cart-summary__tax">
+              {{ section.settings.shipping_text }}
+            </p>
+
+
+            <button
+              type="submit"
+              name="checkout"
+              class="boutique-cart-checkout"
+            >
+
+              <span>
+                CHECKOUT
+              </span>
+
+              <span>
+                {{ cart.total_price | money }}
+              </span>
+
+            </button>
+
+
+            {% if section.settings.show_secure_message %}
+
+              <div class="boutique-cart-secure">
+                <span>◇</span>
+
+                <p>
+                  <strong>
+                    Secure checkout
+                  </strong>
+
+                  <small>
+                    Your payment information is protected.
+                  </small>
+                </p>
+              </div>
+
+            {% endif %}
+
+          </aside>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  {% endif %}
+
+</section>
+
+
+{% stylesheet %}
+
+/* ====================================
+   CART PAGE
+==================================== */
+
+.boutique-cart-page {
+  width: 100%;
+
+  min-height: 65vh;
+
+  padding:
+    55px
+    25px
+    90px;
+
+  box-sizing: border-box;
+
+  background: var(--cart-bg);
+  color: var(--cart-text);
+}
+
+.boutique-cart-page__inner {
+  width: min(100%, 1450px);
+
+  margin: 0 auto;
+}
+
+
+/* ====================================
+   CART HEADER
+==================================== */
+
+.boutique-cart-page__header {
+  padding-bottom: 35px;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.boutique-cart-page__eyebrow {
+  margin:
+    0
+    0
+    10px;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.18em;
+}
+
+.boutique-cart-page__header h1 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(42px, 5vw, 68px);
+
+  line-height: 1;
+
+  font-weight: 400;
+}
+
+.boutique-cart-page__header > span {
+  padding-bottom: 6px;
+
+  font-size: 9px;
+
+  letter-spacing: 0.14em;
+
+  opacity: 0.55;
+}
+
+
+/* ====================================
+   FREE SHIPPING
+==================================== */
+
+.boutique-cart-shipping {
+  margin-bottom: 35px;
+
+  padding:
+    18px
+    20px;
+
+  background: var(--cart-panel);
+}
+
+.boutique-cart-shipping p {
+  margin:
+    0
+    0
+    11px;
+
+  font-size: 11px;
+}
+
+.boutique-cart-shipping__bar {
+  width: 100%;
+  height: 2px;
+
+  overflow: hidden;
+
+  background: var(--cart-border);
+}
+
+.boutique-cart-shipping__bar span {
+  display: block;
+
+  height: 100%;
+
+  max-width: 100%;
+
+  background: var(--cart-text);
+}
+
+
+/* ====================================
+   LAYOUT
+==================================== */
+
+.boutique-cart-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.7fr)
+    minmax(320px, 0.7fr);
+
+  gap:
+    clamp(50px, 6vw, 100px);
+
+  align-items: start;
+}
+
+
+/* ====================================
+   CART HEADER ROW
+==================================== */
+
+.boutique-cart-items__head {
+  min-height: 45px;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    150px
+    110px;
+
+  align-items: center;
+
+  border-bottom:
+    1px solid var(--cart-border);
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 0.15em;
+}
+
+.boutique-cart-items__head span:nth-child(2) {
+  text-align: center;
+}
+
+.boutique-cart-items__head span:last-child {
+  text-align: right;
+}
+
+
+/* ====================================
+   CART ITEM
+==================================== */
+
+.boutique-cart-item {
+  padding:
+    25px
+    0;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    150px
+    110px;
+
+  gap: 20px;
+
+  align-items: center;
+
+  border-bottom:
+    1px solid var(--cart-border);
+}
+
+
+/* PRODUCT */
+
+.boutique-cart-item__product {
+  display: grid;
+
+  grid-template-columns:
+    120px
+    1fr;
+
+  gap: 22px;
+
+  align-items: start;
+}
+
+.boutique-cart-item__image {
+  display: block;
+
+  width: 120px;
+
+  aspect-ratio: 3 / 4;
+
+  overflow: hidden;
+
+  background: #ece8e2;
+}
+
+.boutique-cart-item__image img,
+.boutique-cart-item__image svg {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+/* PRODUCT DETAILS */
+
+.boutique-cart-item__vendor {
+  margin:
+    0
+    0
+    7px;
+
+  font-size: 8px;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+
+  opacity: 0.5;
+}
+
+.boutique-cart-item__title {
+  color: inherit;
+
+  text-decoration: none;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 17px;
+
+  line-height: 1.3;
+}
+
+.boutique-cart-item__variant,
+.boutique-cart-item__properties {
+  margin-top: 8px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  font-size: 10px;
+
+  opacity: 0.58;
+}
+
+.boutique-cart-item__unit-price {
+  margin-top: 10px;
+
+  display: flex;
+
+  gap: 8px;
+
+  font-size: 11px;
+}
+
+.boutique-cart-item__sale-price {
+  color: #9b3a32;
+}
+
+.boutique-cart-item__unit-price s {
+  opacity: 0.45;
+}
+
+.boutique-cart-item__discount {
+  margin-top: 7px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  font-size: 9px;
+}
+
+.boutique-cart-item__remove {
+  display: inline-block;
+
+  margin-top: 15px;
+
+  color: inherit;
+
+  font-size: 8px;
+
+  letter-spacing: 0.14em;
+
+  text-decoration: underline;
+
+  opacity: 0.6;
+}
+
+
+/* ====================================
+   QUANTITY
+==================================== */
+
+.boutique-cart-item__quantity-wrap {
+  display: flex;
+
+  justify-content: center;
+}
+
+.boutique-cart-quantity {
+  display: grid;
+
+  grid-template-columns:
+    35px
+    40px
+    35px;
+
+  border:
+    1px solid var(--cart-border);
+}
+
+.boutique-cart-quantity button,
+.boutique-cart-quantity input {
+  height: 40px;
+
+  border: 0;
+
+  padding: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  text-align: center;
+}
+
+.boutique-cart-quantity button {
+  cursor: pointer;
+
+  font-size: 16px;
+}
+
+.boutique-cart-quantity input {
+  width: 100%;
+
+  appearance: textfield;
+}
+
+
+/* ====================================
+   LINE TOTAL
+==================================== */
+
+.boutique-cart-item__total {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 5px;
+
+  font-size: 12px;
+}
+
+.boutique-cart-item__total s {
+  opacity: 0.4;
+}
+
+
+/* ====================================
+   ACTIONS
+==================================== */
+
+.boutique-cart-items__actions {
+  padding-top: 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.boutique-cart-items__actions a,
+.boutique-cart-items__actions button {
+  color: inherit;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+.boutique-cart-items__actions a {
+  text-decoration: none;
+}
+
+.boutique-cart-items__actions button {
+  padding: 0;
+
+  background: transparent;
+
+  border: 0;
+
+  border-bottom:
+    1px solid currentColor;
+
+  cursor: pointer;
+}
+
+
+/* ====================================
+   SUMMARY
+==================================== */
+
+.boutique-cart-summary {
+  position: sticky;
+
+  top: 120px;
+
+  padding:
+    35px
+    32px;
+
+  background: var(--cart-panel);
+}
+
+.boutique-cart-summary h2 {
+  margin:
+    0
+    0
+    30px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 28px;
+
+  font-weight: 400;
+}
+
+
+/* CART NOTE */
+
+.boutique-cart-note {
+  border-top:
+    1px solid var(--cart-border);
+
+  border-bottom:
+    1px solid var(--cart-border);
+}
+
+.boutique-cart-note summary {
+  min-height: 52px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  list-style: none;
+
+  cursor: pointer;
+
+  font-size: 9px;
+
+  letter-spacing: 0.13em;
+}
+
+.boutique-cart-note summary::-webkit-details-marker {
+  display: none;
+}
+
+.boutique-cart-note textarea {
+  width: 100%;
+  min-height: 90px;
+
+  box-sizing: border-box;
+
+  margin-bottom: 18px;
+
+  padding: 12px;
+
+  resize: vertical;
+
+  border:
+    1px solid var(--cart-border);
+
+  background: transparent;
+
+  color: inherit;
+
+  font-family: inherit;
+
+  font-size: 12px;
+}
+
+
+/* DISCOUNT */
+
+.boutique-cart-summary__discount {
+  padding:
+    18px
+    0
+    5px;
+}
+
+.boutique-cart-summary__discount > div {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 8px;
+
+  font-size: 10px;
+}
+
+
+/* SUBTOTAL */
+
+.boutique-cart-summary__row {
+  padding:
+    24px
+    0
+    12px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  font-size: 13px;
+}
+
+.boutique-cart-summary__row strong {
+  font-weight: 500;
+}
+
+.boutique-cart-summary__tax {
+  margin:
+    0
+    0
+    22px;
+
+  font-size: 9px;
+
+  line-height: 1.6;
+
+  opacity: 0.55;
+}
+
+
+/* CHECKOUT */
+
+.boutique-cart-checkout {
+  width: 100%;
+
+  min-height: 54px;
+
+  padding:
+    0
+    20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border:
+    1px solid var(--cart-text);
+
+  background: var(--cart-text);
+
+  color: var(--cart-bg);
+
+  cursor: pointer;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.boutique-cart-checkout:hover {
+  background: transparent;
+
+  color: var(--cart-text);
+}
+
+
+/* SECURE */
+
+.boutique-cart-secure {
+  margin-top: 22px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.boutique-cart-secure > span {
+  font-size: 19px;
+}
+
+.boutique-cart-secure p {
+  margin: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.boutique-cart-secure strong {
+  font-size: 9px;
+}
+
+.boutique-cart-secure small {
+  font-size: 8px;
+
+  opacity: 0.5;
+}
+
+
+/* ====================================
+   EMPTY CART
+==================================== */
+
+.boutique-cart-empty {
+  width: min(calc(100% - 40px), 700px);
+
+  margin: 0 auto;
+
+  padding:
+    90px
+    0
+    120px;
+
+  text-align: center;
+}
+
+.boutique-cart-empty__eyebrow {
+  margin:
+    0
+    0
+    16px;
+
+  font-size: 9px;
+
+  letter-spacing: 0.18em;
+}
+
+.boutique-cart-empty h1 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(42px, 6vw, 70px);
+
+  font-weight: 400;
+}
+
+.boutique-cart-empty > p:not(.boutique-cart-empty__eyebrow) {
+  margin:
+    20px
+    0
+    30px;
+
+  font-size: 13px;
+
+  opacity: 0.6;
+}
+
+.boutique-cart-empty__button {
+  min-height: 50px;
+
+  padding:
+    0
+    28px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border:
+    1px solid var(--cart-text);
+
+  background: var(--cart-text);
+
+  color: var(--cart-bg);
+
+  text-decoration: none;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.15em;
+}
+
+
+/* ====================================
+   TABLET
+==================================== */
+
+@media screen and (max-width: 950px) {
+
+  .boutique-cart-layout {
+    grid-template-columns: 1fr;
+
+    gap: 50px;
+  }
+
+  .boutique-cart-summary {
+    position: static;
+  }
+
+}
+
+
+/* ====================================
+   MOBILE
+==================================== */
+
+@media screen and (max-width: 650px) {
+
+  .boutique-cart-page {
+    padding:
+      40px
+      15px
+      65px;
+  }
+
+  .boutique-cart-page__header {
+    padding-bottom: 25px;
+  }
+
+  .boutique-cart-page__header h1 {
+    font-size: 42px;
+  }
+
+  .boutique-cart-items__head {
+    display: none;
+  }
+
+  .boutique-cart-item {
+    padding:
+      22px
+      0;
+
+    grid-template-columns:
+      1fr
+      auto;
+
+    gap:
+      20px
+      10px;
+  }
+
+  .boutique-cart-item__product {
+    grid-column:
+      1 / -1;
+
+    grid-template-columns:
+      95px
+      1fr;
+
+    gap: 15px;
+  }
+
+  .boutique-cart-item__image {
+    width: 95px;
+  }
+
+  .boutique-cart-item__quantity-wrap {
+    justify-content: flex-start;
+
+    padding-left: 110px;
+  }
+
+  .boutique-cart-item__total {
+    justify-content: center;
+  }
+
+  .boutique-cart-items__actions {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .boutique-cart-summary {
+    padding:
+      30px
+      22px;
+  }
+
+}
+
+
+/* ====================================
+   SMALL MOBILE
+==================================== */
+
+@media screen and (max-width: 400px) {
+
+  .boutique-cart-item__quantity-wrap {
+    padding-left: 0;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const cartSection =
+    document.getElementById(
+      'BoutiqueCart-{{ section.id }}'
+    );
+
+  if (!cartSection) return;
+
+
+  cartSection
+    .querySelectorAll('[data-cart-minus]')
+    .forEach(function (button) {
+
+      button.addEventListener(
+        'click',
+        function () {
+
+          const quantity =
+            button.parentElement.querySelector(
+              'input[type="number"]'
+            );
+
+          if (!quantity) return;
+
+          const current =
+            parseInt(quantity.value, 10) || 0;
+
+          quantity.value =
+            Math.max(0, current - 1);
+
+        }
+      );
+
+    });
+
+
+  cartSection
+    .querySelectorAll('[data-cart-plus]')
+    .forEach(function (button) {
+
+      button.addEventListener(
+        'click',
+        function () {
+
+          const quantity =
+            button.parentElement.querySelector(
+              'input[type="number"]'
+            );
+
+          if (!quantity) return;
+
+          const current =
+            parseInt(quantity.value, 10) || 0;
+
+          quantity.value =
+            current + 1;
+
+        }
+      );
+
+    });
+
+});
+</script>
+
+
+{% schema %}
+{
+  "name": "Boutique cart",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Cart"
+    },
+
+    {
+      "type": "url",
+      "id": "continue_shopping_link",
+      "label": "Continue shopping link"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_cart_note",
+      "label": "Show order note",
+      "default": true
+    },
+
+
+    {
+      "type": "header",
+      "content": "Free shipping"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_shipping_progress",
+      "label": "Show free shipping progress",
+      "default": true
+    },
+
+    {
+      "type": "range",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping threshold",
+      "min": 500,
+      "max": 9500,
+      "step": 500,
+      "default": 2000
+    },
+
+
+    {
+      "type": "header",
+      "content": "Checkout"
+    },
+
+    {
+      "type": "text",
+      "id": "shipping_text",
+      "label": "Checkout note",
+      "default": "Taxes and shipping are calculated at checkout."
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_secure_message",
+      "label": "Show secure checkout message",
+      "default": true
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borders",
+      "default": "#DEDAD4"
+    },
+
+    {
+      "type": "color",
+      "id": "summary_background",
+      "label": "Order summary background",
+      "default": "#F5F1EB"
+    }
+
+  ]
+}
+{% endschema %}

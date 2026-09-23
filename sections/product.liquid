@@ -1,0 +1,1918 @@
+{% comment %}
+  Boutique product page
+{% endcomment %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+<section
+  id="BoutiqueProduct-{{ section.id }}"
+  class="boutique-product"
+  style="
+    --product-bg: {{ section.settings.background_color }};
+    --product-text: {{ section.settings.text_color }};
+    --product-border: {{ section.settings.border_color }};
+  "
+>
+
+  {% if section.settings.show_breadcrumb %}
+    <div class="boutique-product__breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a>
+
+      {% if product.collections.first %}
+        <span>/</span>
+        <a href="{{ product.collections.first.url }}">
+          {{ product.collections.first.title }}
+        </a>
+      {% endif %}
+
+      <span>/</span>
+      <span>{{ product.title }}</span>
+    </div>
+  {% endif %}
+
+
+  <div class="boutique-product__layout">
+
+    <!-- ==========================
+         PRODUCT GALLERY
+    =========================== -->
+
+    <div class="boutique-product__gallery">
+
+      <div class="boutique-product__main-media">
+
+        {% if product.featured_image %}
+
+          <img
+            id="BoutiqueMainImage-{{ section.id }}"
+            src="{{ current_variant.featured_image | default: product.featured_image | image_url: width: 1800 }}"
+            alt="{{ current_variant.featured_image.alt | default: product.featured_image.alt | default: product.title | escape }}"
+            width="1800"
+            height="2400"
+            loading="eager"
+          >
+
+        {% else %}
+
+          {{ 'product-1' | placeholder_svg_tag }}
+
+        {% endif %}
+
+      </div>
+
+
+      {% if product.images.size > 1 %}
+
+        <div class="boutique-product__thumbnails">
+
+          {% for image in product.images %}
+
+            <button
+              type="button"
+              class="boutique-product__thumbnail{% if image.id == current_variant.featured_image.id or image.id == product.featured_image.id and current_variant.featured_image == blank %} is-active{% endif %}"
+              data-image-id="{{ image.id }}"
+              data-image-url="{{ image | image_url: width: 1800 }}"
+              data-image-alt="{{ image.alt | default: product.title | escape }}"
+              aria-label="View image {{ forloop.index }}"
+            >
+
+              {{
+                image
+                | image_url: width: 240
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '100, 160, 240',
+                  sizes: '90px'
+              }}
+
+            </button>
+
+          {% endfor %}
+
+        </div>
+
+      {% endif %}
+
+    </div>
+
+
+    <!-- ==========================
+         PRODUCT INFORMATION
+    =========================== -->
+
+    <div class="boutique-product__info">
+
+      <div class="boutique-product__info-inner">
+
+        {% if section.settings.show_vendor and product.vendor != blank %}
+          <p class="boutique-product__vendor">
+            {{ product.vendor }}
+          </p>
+        {% endif %}
+
+
+        <h1 class="boutique-product__title">
+          {{ product.title }}
+        </h1>
+
+
+        <!-- PRICE -->
+
+        <div class="boutique-product__price">
+
+          <span
+            class="boutique-product__current-price"
+            data-product-price
+          >
+            {{ current_variant.price | money }}
+          </span>
+
+          <s
+            class="boutique-product__compare-price"
+            data-product-compare-price
+            {% if current_variant.compare_at_price == blank or current_variant.compare_at_price <= current_variant.price %}
+              hidden
+            {% endif %}
+          >
+            {{ current_variant.compare_at_price | money }}
+          </s>
+
+        </div>
+
+
+        {% if section.settings.show_sku %}
+          <p
+            class="boutique-product__sku"
+            data-product-sku
+            {% if current_variant.sku == blank %}
+              hidden
+            {% endif %}
+          >
+            SKU: {{ current_variant.sku }}
+          </p>
+        {% endif %}
+
+
+        {% if section.settings.show_inventory %}
+
+          <div
+            class="boutique-product__inventory"
+            data-inventory-status
+          >
+
+            {% if current_variant.available %}
+
+              {% if current_variant.inventory_management
+                and current_variant.inventory_quantity > 0
+                and current_variant.inventory_quantity <= section.settings.low_stock_threshold
+              %}
+
+                <span class="boutique-product__inventory-dot boutique-product__inventory-dot--low"></span>
+
+                Only {{ current_variant.inventory_quantity }} left
+
+              {% else %}
+
+                <span class="boutique-product__inventory-dot"></span>
+
+                In stock
+
+              {% endif %}
+
+            {% else %}
+
+              <span class="boutique-product__inventory-dot boutique-product__inventory-dot--sold"></span>
+
+              Sold out
+
+            {% endif %}
+
+          </div>
+
+        {% endif %}
+
+
+        <!-- DESCRIPTION -->
+
+        {% if product.description != blank %}
+
+          <div class="boutique-product__description">
+            {{ product.description }}
+          </div>
+
+        {% endif %}
+
+
+        <!-- PRODUCT FORM -->
+
+        {% form 'product', product, id: 'BoutiqueProductForm', class: 'boutique-product-form' %}
+
+          <input
+            type="hidden"
+            name="id"
+            value="{{ current_variant.id }}"
+            data-variant-id
+          >
+
+
+          <!-- OPTIONS -->
+
+          {% unless product.has_only_default_variant %}
+
+            <div class="boutique-product__options">
+
+              {% for option in product.options_with_values %}
+
+                {% assign option_index = forloop.index0 %}
+
+                <fieldset
+                  class="boutique-product__option"
+                  data-option-index="{{ option_index }}"
+                >
+
+                  <legend>
+
+                    <span>
+                      {{ option.name }}
+                    </span>
+
+                    {% if option.name contains 'Size' or option.name contains 'size' %}
+
+                      {% if section.settings.size_guide_page != blank %}
+                        <button
+                          type="button"
+                          class="boutique-product__size-guide-trigger"
+                          data-size-guide-open
+                        >
+                          SIZE GUIDE
+                        </button>
+                      {% endif %}
+
+                    {% endif %}
+
+                  </legend>
+
+
+                  <div class="boutique-product__option-values">
+
+                    {% for value in option.values %}
+
+                      {% assign selected_option_value = current_variant.options[option_index] %}
+
+                      <label class="boutique-product__option-value">
+
+                        <input
+                          type="radio"
+                          name="BoutiqueOption-{{ section.id }}-{{ option_index }}"
+                          value="{{ value | escape }}"
+                          {% if selected_option_value == value %}
+                            checked
+                          {% endif %}
+                        >
+
+                        <span>
+                          {{ value }}
+                        </span>
+
+                      </label>
+
+                    {% endfor %}
+
+                  </div>
+
+                </fieldset>
+
+              {% endfor %}
+
+            </div>
+
+          {% endunless %}
+
+
+          <!-- QUANTITY -->
+
+          <div class="boutique-product__quantity-row">
+
+            <label for="BoutiqueQuantity-{{ section.id }}">
+              QUANTITY
+            </label>
+
+            <div class="boutique-product__quantity">
+
+              <button
+                type="button"
+                data-quantity-minus
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+
+              <input
+                id="BoutiqueQuantity-{{ section.id }}"
+                type="number"
+                name="quantity"
+                value="1"
+                min="1"
+                inputmode="numeric"
+              >
+
+              <button
+                type="button"
+                data-quantity-plus
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- ADD TO CART -->
+
+          <button
+            type="submit"
+            class="boutique-product__add"
+            data-add-to-cart
+            {% unless current_variant.available %}
+              disabled
+            {% endunless %}
+          >
+
+            <span data-add-to-cart-text>
+              {% if current_variant.available %}
+                ADD TO CART
+              {% else %}
+                SOLD OUT
+              {% endif %}
+            </span>
+
+            <span data-add-to-cart-price>
+              {{ current_variant.price | money }}
+            </span>
+
+          </button>
+
+
+          {% if section.settings.show_dynamic_checkout %}
+
+            <div class="boutique-product__buy-now">
+              {{ form | payment_button }}
+            </div>
+
+          {% endif %}
+
+        {% endform %}
+
+
+        <!-- BENEFITS -->
+
+        <div class="boutique-product__mini-benefits">
+
+          <div>
+            <span>◇</span>
+
+            <p>
+              <strong>Secure checkout</strong>
+              <small>Protected payments</small>
+            </p>
+          </div>
+
+          <div>
+            <span>↺</span>
+
+            <p>
+              <strong>Easy returns</strong>
+              <small>Simple return process</small>
+            </p>
+          </div>
+
+        </div>
+
+
+        <!-- ACCORDIONS -->
+
+        <div class="boutique-product__accordions">
+
+          {% if section.settings.shipping_text != blank %}
+
+            <details>
+
+              <summary>
+                SHIPPING
+                <span>+</span>
+              </summary>
+
+              <div>
+                {{ section.settings.shipping_text }}
+              </div>
+
+            </details>
+
+          {% endif %}
+
+
+          {% if section.settings.returns_text != blank %}
+
+            <details>
+
+              <summary>
+                RETURNS
+                <span>+</span>
+              </summary>
+
+              <div>
+                {{ section.settings.returns_text }}
+              </div>
+
+            </details>
+
+          {% endif %}
+
+
+          {% if section.settings.care_text != blank %}
+
+            <details>
+
+              <summary>
+                CARE & MATERIALS
+                <span>+</span>
+              </summary>
+
+              <div>
+                {{ section.settings.care_text }}
+              </div>
+
+            </details>
+
+          {% endif %}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- SIZE GUIDE MODAL -->
+
+  {% if section.settings.size_guide_page != blank %}
+
+    <div
+      class="boutique-size-guide"
+      data-size-guide
+      hidden
+    >
+
+      <button
+        class="boutique-size-guide__overlay"
+        type="button"
+        data-size-guide-close
+        aria-label="Close size guide"
+      ></button>
+
+
+      <div class="boutique-size-guide__panel">
+
+        <button
+          type="button"
+          class="boutique-size-guide__close"
+          data-size-guide-close
+          aria-label="Close size guide"
+        >
+          ×
+        </button>
+
+        <h2>
+          {{ section.settings.size_guide_page.title }}
+        </h2>
+
+        <div class="boutique-size-guide__content">
+          {{ section.settings.size_guide_page.content }}
+        </div>
+
+      </div>
+
+    </div>
+
+  {% endif %}
+
+
+  <!-- VARIANT DATA -->
+
+  <script
+    type="application/json"
+    data-variants-json
+  >
+    [
+      {% for variant in product.variants %}
+        {
+          "id": {{ variant.id | json }},
+          "available": {{ variant.available | json }},
+          "price": {{ variant.price | money | json }},
+          "compare_at_price": {% if variant.compare_at_price %}{{ variant.compare_at_price | money | json }}{% else %}""{% endif %},
+          "sku": {{ variant.sku | json }},
+          "inventory_quantity": {{ variant.inventory_quantity | json }},
+          "inventory_management": {{ variant.inventory_management | json }},
+          "options": {{ variant.options | json }},
+          "featured_image_id": {% if variant.featured_image %}{{ variant.featured_image.id | json }}{% else %}null{% endif %}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  </script>
+
+</section>
+
+
+{% stylesheet %}
+
+/* ===================================
+   PRODUCT PAGE
+=================================== */
+
+.boutique-product {
+  width: 100%;
+
+  padding-bottom: 80px;
+
+  background: var(--product-bg);
+  color: var(--product-text);
+}
+
+
+/* BREADCRUMB */
+
+.boutique-product__breadcrumb {
+  width: min(calc(100% - 50px), 1450px);
+
+  margin: 0 auto;
+
+  padding: 25px 0;
+
+  display: flex;
+
+  gap: 8px;
+
+  align-items: center;
+
+  font-size: 9px;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+
+  opacity: 0.5;
+}
+
+.boutique-product__breadcrumb a {
+  color: inherit;
+
+  text-decoration: none;
+}
+
+
+/* ===================================
+   LAYOUT
+=================================== */
+
+.boutique-product__layout {
+  width: min(calc(100% - 50px), 1450px);
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 58%)
+    minmax(0, 42%);
+
+  gap: clamp(45px, 6vw, 100px);
+
+  align-items: start;
+}
+
+
+/* ===================================
+   GALLERY
+=================================== */
+
+.boutique-product__gallery {
+  min-width: 0;
+}
+
+.boutique-product__main-media {
+  width: 100%;
+
+  aspect-ratio: 3 / 4;
+
+  overflow: hidden;
+
+  background: #eeeae5;
+}
+
+.boutique-product__main-media img,
+.boutique-product__main-media svg {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.boutique-product__thumbnails {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 8px;
+
+  margin-top: 10px;
+}
+
+.boutique-product__thumbnail {
+  appearance: none;
+
+  padding: 0;
+
+  border:
+    1px solid transparent;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  aspect-ratio: 3 / 4;
+
+  overflow: hidden;
+
+  opacity: 0.65;
+}
+
+.boutique-product__thumbnail.is-active {
+  border-color: var(--product-text);
+
+  opacity: 1;
+}
+
+.boutique-product__thumbnail img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+/* ===================================
+   PRODUCT INFO
+=================================== */
+
+.boutique-product__info-inner {
+  position: sticky;
+
+  top: 120px;
+
+  max-width: 550px;
+}
+
+.boutique-product__vendor {
+  margin: 0 0 12px;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+
+  opacity: 0.55;
+}
+
+.boutique-product__title {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(38px, 4vw, 58px);
+
+  line-height: 1.05;
+
+  font-weight: 400;
+}
+
+
+/* PRICE */
+
+.boutique-product__price {
+  margin-top: 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  font-size: 16px;
+}
+
+.boutique-product__compare-price {
+  opacity: 0.45;
+}
+
+.boutique-product__sku {
+  margin: 9px 0 0;
+
+  font-size: 9px;
+
+  letter-spacing: 0.1em;
+
+  opacity: 0.5;
+}
+
+
+/* INVENTORY */
+
+.boutique-product__inventory {
+  margin-top: 17px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  font-size: 11px;
+
+  letter-spacing: 0.04em;
+}
+
+.boutique-product__inventory-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #588a63;
+}
+
+.boutique-product__inventory-dot--low {
+  background: #c4933f;
+}
+
+.boutique-product__inventory-dot--sold {
+  background: #a94b45;
+}
+
+
+/* DESCRIPTION */
+
+.boutique-product__description {
+  margin-top: 25px;
+
+  font-size: 13px;
+
+  line-height: 1.75;
+
+  opacity: 0.75;
+}
+
+.boutique-product__description p:first-child {
+  margin-top: 0;
+}
+
+
+/* ===================================
+   OPTIONS
+=================================== */
+
+.boutique-product__options {
+  margin-top: 30px;
+}
+
+.boutique-product__option {
+  margin: 0 0 25px;
+
+  padding: 0;
+
+  border: 0;
+}
+
+.boutique-product__option legend {
+  width: 100%;
+
+  margin-bottom: 12px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+.boutique-product__size-guide-trigger {
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  cursor: pointer;
+
+  font-size: 9px;
+
+  letter-spacing: 0.12em;
+
+  text-decoration: underline;
+}
+
+.boutique-product__option-values {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.boutique-product__option-value {
+  position: relative;
+
+  cursor: pointer;
+}
+
+.boutique-product__option-value input {
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+.boutique-product__option-value span {
+  min-width: 45px;
+
+  min-height: 43px;
+
+  padding: 0 14px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid var(--product-border);
+
+  font-size: 11px;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border 0.2s ease;
+}
+
+.boutique-product__option-value input:checked + span {
+  border-color: var(--product-text);
+
+  background: var(--product-text);
+
+  color: var(--product-bg);
+}
+
+
+/* ===================================
+   QUANTITY
+=================================== */
+
+.boutique-product__quantity-row {
+  margin-top: 25px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.boutique-product__quantity-row > label {
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+}
+
+.boutique-product__quantity {
+  display: grid;
+
+  grid-template-columns:
+    38px
+    42px
+    38px;
+
+  border:
+    1px solid var(--product-border);
+}
+
+.boutique-product__quantity button,
+.boutique-product__quantity input {
+  height: 42px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  text-align: center;
+}
+
+.boutique-product__quantity button {
+  cursor: pointer;
+
+  font-size: 17px;
+}
+
+.boutique-product__quantity input {
+  width: 100%;
+
+  appearance: textfield;
+}
+
+
+/* ===================================
+   ADD TO CART
+=================================== */
+
+.boutique-product__add {
+  width: 100%;
+
+  min-height: 55px;
+
+  margin-top: 25px;
+
+  padding: 0 22px;
+
+  border:
+    1px solid var(--product-text);
+
+  background: var(--product-text);
+
+  color: var(--product-bg);
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+
+  transition:
+    opacity 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.boutique-product__add:hover {
+  background: transparent;
+
+  color: var(--product-text);
+}
+
+.boutique-product__add:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.45;
+}
+
+
+/* DYNAMIC CHECKOUT */
+
+.boutique-product__buy-now {
+  margin-top: 10px;
+}
+
+
+/* ===================================
+   MINI BENEFITS
+=================================== */
+
+.boutique-product__mini-benefits {
+  margin-top: 28px;
+
+  padding:
+    18px
+    0;
+
+  border-top:
+    1px solid var(--product-border);
+
+  border-bottom:
+    1px solid var(--product-border);
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  gap: 15px;
+}
+
+.boutique-product__mini-benefits > div {
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+}
+
+.boutique-product__mini-benefits > div > span {
+  font-size: 19px;
+}
+
+.boutique-product__mini-benefits p {
+  margin: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.boutique-product__mini-benefits strong {
+  font-size: 10px;
+
+  font-weight: 600;
+}
+
+.boutique-product__mini-benefits small {
+  font-size: 9px;
+
+  opacity: 0.55;
+}
+
+
+/* ===================================
+   ACCORDIONS
+=================================== */
+
+.boutique-product__accordions {
+  margin-top: 15px;
+}
+
+.boutique-product__accordions details {
+  border-bottom:
+    1px solid var(--product-border);
+}
+
+.boutique-product__accordions summary {
+  min-height: 55px;
+
+  list-style: none;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  cursor: pointer;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+}
+
+.boutique-product__accordions summary::-webkit-details-marker {
+  display: none;
+}
+
+.boutique-product__accordions details > div {
+  padding:
+    0
+    0
+    22px;
+
+  font-size: 12px;
+
+  line-height: 1.7;
+
+  opacity: 0.7;
+}
+
+
+/* ===================================
+   SIZE GUIDE
+=================================== */
+
+.boutique-size-guide {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+}
+
+.boutique-size-guide__overlay {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  border: 0;
+
+  background:
+    rgba(0, 0, 0, 0.4);
+}
+
+.boutique-size-guide__panel {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+
+  width: min(500px, 92vw);
+
+  height: 100%;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+
+  padding:
+    60px
+    40px;
+
+  background: var(--product-bg);
+
+  color: var(--product-text);
+}
+
+.boutique-size-guide__close {
+  position: absolute;
+
+  top: 20px;
+  right: 22px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  cursor: pointer;
+
+  font-size: 27px;
+}
+
+.boutique-size-guide__panel h2 {
+  margin:
+    0
+    0
+    30px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 38px;
+
+  font-weight: 400;
+}
+
+.boutique-size-guide__content {
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+
+/* ===================================
+   TABLET
+=================================== */
+
+@media screen and (max-width: 950px) {
+
+  .boutique-product__layout {
+    grid-template-columns:
+      minmax(0, 52%)
+      minmax(0, 48%);
+
+    gap: 35px;
+  }
+
+  .boutique-product__info-inner {
+    top: 90px;
+  }
+
+}
+
+
+/* ===================================
+   MOBILE
+=================================== */
+
+@media screen and (max-width: 767px) {
+
+  .boutique-product {
+    padding-bottom: 55px;
+  }
+
+  .boutique-product__breadcrumb {
+    width: calc(100% - 30px);
+
+    padding:
+      18px
+      0;
+  }
+
+  .boutique-product__layout {
+    width: 100%;
+
+    grid-template-columns: 1fr;
+
+    gap: 0;
+  }
+
+  .boutique-product__thumbnails {
+    padding:
+      0
+      10px;
+  }
+
+  .boutique-product__info {
+    padding:
+      35px
+      20px
+      0;
+  }
+
+  .boutique-product__info-inner {
+    position: static;
+
+    max-width: none;
+  }
+
+  .boutique-product__title {
+    font-size: 40px;
+  }
+
+}
+
+
+/* ===================================
+   SMALL MOBILE
+=================================== */
+
+@media screen and (max-width: 450px) {
+
+  .boutique-product__thumbnails {
+    grid-template-columns:
+      repeat(4, 1fr);
+  }
+
+  .boutique-product__mini-benefits {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const productSection =
+    document.getElementById('BoutiqueProduct-{{ section.id }}');
+
+  if (!productSection) return;
+
+
+  /* ==============================
+     IMAGE GALLERY
+  ============================== */
+
+  const mainImage =
+    productSection.querySelector(
+      '#BoutiqueMainImage-{{ section.id }}'
+    );
+
+  const thumbnails =
+    productSection.querySelectorAll(
+      '.boutique-product__thumbnail'
+    );
+
+
+  thumbnails.forEach(function (thumbnail) {
+
+    thumbnail.addEventListener('click', function () {
+
+      if (!mainImage) return;
+
+      mainImage.src =
+        thumbnail.dataset.imageUrl;
+
+      mainImage.alt =
+        thumbnail.dataset.imageAlt || '';
+
+      thumbnails.forEach(function (item) {
+        item.classList.remove('is-active');
+      });
+
+      thumbnail.classList.add('is-active');
+
+    });
+
+  });
+
+
+  /* ==============================
+     VARIANT DATA
+  ============================== */
+
+  const variantJson =
+    productSection.querySelector(
+      '[data-variants-json]'
+    );
+
+  const variants =
+    variantJson
+      ? JSON.parse(variantJson.textContent)
+      : [];
+
+
+  const optionGroups =
+    productSection.querySelectorAll(
+      '[data-option-index]'
+    );
+
+
+  const variantInput =
+    productSection.querySelector(
+      '[data-variant-id]'
+    );
+
+
+  const price =
+    productSection.querySelector(
+      '[data-product-price]'
+    );
+
+
+  const comparePrice =
+    productSection.querySelector(
+      '[data-product-compare-price]'
+    );
+
+
+  const sku =
+    productSection.querySelector(
+      '[data-product-sku]'
+    );
+
+
+  const inventory =
+    productSection.querySelector(
+      '[data-inventory-status]'
+    );
+
+
+  const addButton =
+    productSection.querySelector(
+      '[data-add-to-cart]'
+    );
+
+
+  const addButtonText =
+    productSection.querySelector(
+      '[data-add-to-cart-text]'
+    );
+
+
+  const addButtonPrice =
+    productSection.querySelector(
+      '[data-add-to-cart-price]'
+    );
+
+
+  function getSelectedOptions() {
+
+    const selected = [];
+
+    optionGroups.forEach(function (group) {
+
+      const checked =
+        group.querySelector(
+          'input[type="radio"]:checked'
+        );
+
+      if (checked) {
+        selected.push(checked.value);
+      }
+
+    });
+
+    return selected;
+
+  }
+
+
+  function findVariant() {
+
+    if (!variants.length) return null;
+
+    if (!optionGroups.length) {
+      return variants[0];
+    }
+
+    const selected =
+      getSelectedOptions();
+
+
+    return variants.find(function (variant) {
+
+      return variant.options.every(
+        function (option, index) {
+
+          return option === selected[index];
+
+        }
+      );
+
+    });
+
+  }
+
+
+  function updateVariant() {
+
+    const variant =
+      findVariant();
+
+    if (!variant) {
+
+      if (addButton) {
+        addButton.disabled = true;
+      }
+
+      if (addButtonText) {
+        addButtonText.textContent =
+          'UNAVAILABLE';
+      }
+
+      return;
+
+    }
+
+
+    if (variantInput) {
+      variantInput.value = variant.id;
+    }
+
+
+    if (price) {
+      price.textContent = variant.price;
+    }
+
+
+    if (comparePrice) {
+
+      if (
+        variant.compare_at_price &&
+        variant.compare_at_price !== variant.price
+      ) {
+
+        comparePrice.textContent =
+          variant.compare_at_price;
+
+        comparePrice.hidden = false;
+
+      } else {
+
+        comparePrice.hidden = true;
+
+      }
+
+    }
+
+
+    if (sku) {
+
+      if (variant.sku) {
+
+        sku.textContent =
+          'SKU: ' + variant.sku;
+
+        sku.hidden = false;
+
+      } else {
+
+        sku.hidden = true;
+
+      }
+
+    }
+
+
+    if (addButton) {
+
+      addButton.disabled =
+        !variant.available;
+
+    }
+
+
+    if (addButtonText) {
+
+      addButtonText.textContent =
+        variant.available
+          ? 'ADD TO CART'
+          : 'SOLD OUT';
+
+    }
+
+
+    if (addButtonPrice) {
+
+      addButtonPrice.textContent =
+        variant.price;
+
+    }
+
+
+    if (inventory) {
+
+      if (!variant.available) {
+
+        inventory.innerHTML =
+          '<span class="boutique-product__inventory-dot boutique-product__inventory-dot--sold"></span> Sold out';
+
+      } else if (
+        variant.inventory_management &&
+        variant.inventory_quantity > 0 &&
+        variant.inventory_quantity <= {{ section.settings.low_stock_threshold }}
+      ) {
+
+        inventory.innerHTML =
+          '<span class="boutique-product__inventory-dot boutique-product__inventory-dot--low"></span> Only ' +
+          variant.inventory_quantity +
+          ' left';
+
+      } else {
+
+        inventory.innerHTML =
+          '<span class="boutique-product__inventory-dot"></span> In stock';
+
+      }
+
+    }
+
+
+    /* Variant image */
+
+    if (variant.featured_image_id) {
+
+      const matchingThumbnail =
+        productSection.querySelector(
+          '[data-image-id="' +
+          variant.featured_image_id +
+          '"]'
+        );
+
+      if (matchingThumbnail) {
+        matchingThumbnail.click();
+      }
+
+    }
+
+
+    /* Update browser URL */
+
+    const url =
+      new URL(window.location.href);
+
+    url.searchParams.set(
+      'variant',
+      variant.id
+    );
+
+    window.history.replaceState(
+      {},
+      '',
+      url.toString()
+    );
+
+  }
+
+
+  optionGroups.forEach(function (group) {
+
+    group
+      .querySelectorAll('input[type="radio"]')
+      .forEach(function (input) {
+
+        input.addEventListener(
+          'change',
+          updateVariant
+        );
+
+      });
+
+  });
+
+
+  /* ==============================
+     QUANTITY
+  ============================== */
+
+  const quantity =
+    productSection.querySelector(
+      'input[name="quantity"]'
+    );
+
+
+  const minus =
+    productSection.querySelector(
+      '[data-quantity-minus]'
+    );
+
+
+  const plus =
+    productSection.querySelector(
+      '[data-quantity-plus]'
+    );
+
+
+  if (minus && quantity) {
+
+    minus.addEventListener(
+      'click',
+      function () {
+
+        const value =
+          parseInt(quantity.value, 10) || 1;
+
+        quantity.value =
+          Math.max(1, value - 1);
+
+      }
+    );
+
+  }
+
+
+  if (plus && quantity) {
+
+    plus.addEventListener(
+      'click',
+      function () {
+
+        const value =
+          parseInt(quantity.value, 10) || 1;
+
+        quantity.value =
+          value + 1;
+
+      }
+    );
+
+  }
+
+
+  /* ==============================
+     SIZE GUIDE
+  ============================== */
+
+  const sizeGuide =
+    productSection.querySelector(
+      '[data-size-guide]'
+    );
+
+
+  productSection
+    .querySelectorAll(
+      '[data-size-guide-open]'
+    )
+    .forEach(function (button) {
+
+      button.addEventListener(
+        'click',
+        function () {
+
+          if (!sizeGuide) return;
+
+          sizeGuide.hidden = false;
+
+          document.body.style.overflow =
+            'hidden';
+
+        }
+      );
+
+    });
+
+
+  productSection
+    .querySelectorAll(
+      '[data-size-guide-close]'
+    )
+    .forEach(function (button) {
+
+      button.addEventListener(
+        'click',
+        function () {
+
+          if (!sizeGuide) return;
+
+          sizeGuide.hidden = true;
+
+          document.body.style.overflow =
+            '';
+
+        }
+      );
+
+    });
+
+});
+</script>
+
+
+{% schema %}
+{
+  "name": "Boutique product",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Product information"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumb",
+      "label": "Show breadcrumb",
+      "default": true
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "Show SKU",
+      "default": false
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_inventory",
+      "label": "Show inventory status",
+      "default": true
+    },
+
+    {
+      "type": "range",
+      "id": "low_stock_threshold",
+      "label": "Low stock threshold",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+
+
+    {
+      "type": "header",
+      "content": "Size guide"
+    },
+
+    {
+      "type": "page",
+      "id": "size_guide_page",
+      "label": "Size guide page"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Checkout"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show Buy it now button",
+      "default": true
+    },
+
+
+    {
+      "type": "header",
+      "content": "Product details"
+    },
+
+    {
+      "type": "richtext",
+      "id": "shipping_text",
+      "label": "Shipping information",
+      "default": "<p>Orders are carefully prepared and dispatched as quickly as possible.</p>"
+    },
+
+    {
+      "type": "richtext",
+      "id": "returns_text",
+      "label": "Returns information",
+      "default": "<p>Returns are accepted according to the store's return policy.</p>"
+    },
+
+    {
+      "type": "richtext",
+      "id": "care_text",
+      "label": "Care and materials",
+      "default": "<p>Refer to the product care label for specific washing and care instructions.</p>"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borders",
+      "default": "#DEDAD4"
+    }
+
+  ],
+
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  }
+}
+{% endschema %}

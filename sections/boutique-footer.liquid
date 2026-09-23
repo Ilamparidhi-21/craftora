@@ -1,0 +1,667 @@
+<footer
+  class="boutique-footer"
+  style="
+    --footer-bg: {{ section.settings.background_color }};
+    --footer-text: {{ section.settings.text_color }};
+    --footer-border: {{ section.settings.border_color }};
+  "
+>
+
+  <div class="boutique-footer__inner">
+
+    <!-- BRAND -->
+    <div class="boutique-footer__brand">
+
+      <a
+        href="{{ routes.root_url }}"
+        class="boutique-footer__logo"
+      >
+
+        {% if section.settings.logo != blank %}
+
+          {{
+            section.settings.logo
+            | image_url: width: 500
+            | image_tag:
+              loading: 'lazy',
+              widths: '150, 250, 350, 500',
+              class: 'boutique-footer__logo-image'
+          }}
+
+        {% else %}
+
+          <span>
+            {{ shop.name }}
+          </span>
+
+        {% endif %}
+
+      </a>
+
+
+      {% if section.settings.tagline != blank %}
+        <p class="boutique-footer__tagline">
+          {{ section.settings.tagline }}
+        </p>
+      {% endif %}
+
+
+      <!-- SOCIALS -->
+      <div class="boutique-footer__socials">
+
+        {% if section.settings.instagram_url != blank %}
+          <a
+            href="{{ section.settings.instagram_url }}"
+            target="_blank"
+            rel="noopener"
+          >
+            Instagram
+          </a>
+        {% endif %}
+
+        {% if section.settings.facebook_url != blank %}
+          <a
+            href="{{ section.settings.facebook_url }}"
+            target="_blank"
+            rel="noopener"
+          >
+            Facebook
+          </a>
+        {% endif %}
+
+        {% if section.settings.pinterest_url != blank %}
+          <a
+            href="{{ section.settings.pinterest_url }}"
+            target="_blank"
+            rel="noopener"
+          >
+            Pinterest
+          </a>
+        {% endif %}
+
+        {% if section.settings.tiktok_url != blank %}
+          <a
+            href="{{ section.settings.tiktok_url }}"
+            target="_blank"
+            rel="noopener"
+          >
+            TikTok
+          </a>
+        {% endif %}
+
+      </div>
+
+    </div>
+
+
+    <!-- MENU 1 -->
+    <div class="boutique-footer__column">
+
+      {% if section.settings.menu_1_heading != blank %}
+        <h3>
+          {{ section.settings.menu_1_heading }}
+        </h3>
+      {% endif %}
+
+      {% if section.settings.menu_1 != blank %}
+        <nav>
+          {% for link in section.settings.menu_1.links %}
+            <a href="{{ link.url }}">
+              {{ link.title }}
+            </a>
+          {% endfor %}
+        </nav>
+      {% endif %}
+
+    </div>
+
+
+    <!-- MENU 2 -->
+    <div class="boutique-footer__column">
+
+      {% if section.settings.menu_2_heading != blank %}
+        <h3>
+          {{ section.settings.menu_2_heading }}
+        </h3>
+      {% endif %}
+
+      {% if section.settings.menu_2 != blank %}
+        <nav>
+          {% for link in section.settings.menu_2.links %}
+            <a href="{{ link.url }}">
+              {{ link.title }}
+            </a>
+          {% endfor %}
+        </nav>
+      {% endif %}
+
+    </div>
+
+
+    <!-- CONTACT / NOTE -->
+    <div class="boutique-footer__column boutique-footer__column--contact">
+
+      {% if section.settings.contact_heading != blank %}
+        <h3>
+          {{ section.settings.contact_heading }}
+        </h3>
+      {% endif %}
+
+      {% if section.settings.contact_text != blank %}
+        <div class="boutique-footer__contact-text">
+          {{ section.settings.contact_text }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.contact_email != blank %}
+        <a
+          href="mailto:{{ section.settings.contact_email }}"
+          class="boutique-footer__email"
+        >
+          {{ section.settings.contact_email }}
+        </a>
+      {% endif %}
+
+    </div>
+
+  </div>
+
+
+  <!-- BOTTOM BAR -->
+  <div class="boutique-footer__bottom">
+
+    <div class="boutique-footer__copyright">
+
+      © {{ 'now' | date: '%Y' }}
+      {{ shop.name }}.
+
+      {% if section.settings.copyright_text != blank %}
+        {{ section.settings.copyright_text }}
+      {% endif %}
+
+    </div>
+
+
+    {% if section.settings.show_payment_icons %}
+
+      <div class="boutique-footer__payments">
+
+        {% for type in shop.enabled_payment_types %}
+
+          <span>
+            {{ type | payment_type_svg_tag }}
+          </span>
+
+        {% endfor %}
+
+      </div>
+
+    {% endif %}
+
+  </div>
+
+</footer>
+
+
+{% stylesheet %}
+
+/* ===============================
+   FOOTER
+================================ */
+
+.boutique-footer {
+  width: 100%;
+
+  background: var(--footer-bg);
+  color: var(--footer-text);
+}
+
+
+/* ===============================
+   MAIN GRID
+================================ */
+
+.boutique-footer__inner {
+  width: min(calc(100% - 50px), 1450px);
+
+  margin: 0 auto;
+
+  padding: 75px 0 65px;
+
+  display: grid;
+
+  grid-template-columns:
+    1.5fr
+    0.8fr
+    0.8fr
+    1fr;
+
+  gap: 70px;
+}
+
+
+/* ===============================
+   BRAND
+================================ */
+
+.boutique-footer__logo {
+  color: inherit;
+
+  text-decoration: none;
+
+  display: inline-flex;
+
+  align-items: center;
+}
+
+.boutique-footer__logo span {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 32px;
+
+  letter-spacing: 0.20em;
+
+  text-transform: uppercase;
+}
+
+.boutique-footer__logo-image {
+  display: block;
+
+  max-width: 180px;
+
+  height: auto;
+}
+
+.boutique-footer__tagline {
+  max-width: 330px;
+
+  margin: 20px 0 0;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+
+  opacity: 0.65;
+}
+
+
+/* ===============================
+   SOCIAL LINKS
+================================ */
+
+.boutique-footer__socials {
+  margin-top: 30px;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 18px;
+}
+
+.boutique-footer__socials a {
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+
+  border-bottom:
+    1px solid transparent;
+
+  padding-bottom: 3px;
+}
+
+.boutique-footer__socials a:hover {
+  border-color: currentColor;
+}
+
+
+/* ===============================
+   COLUMNS
+================================ */
+
+.boutique-footer__column h3 {
+  margin: 0 0 21px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.18em;
+
+  text-transform: uppercase;
+}
+
+.boutique-footer__column nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.boutique-footer__column nav a,
+.boutique-footer__email {
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 13px;
+
+  opacity: 0.7;
+
+  transition: opacity 0.2s ease;
+}
+
+.boutique-footer__column nav a:hover,
+.boutique-footer__email:hover {
+  opacity: 1;
+}
+
+.boutique-footer__contact-text {
+  max-width: 300px;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+
+  opacity: 0.7;
+}
+
+.boutique-footer__contact-text p {
+  margin: 0 0 15px;
+}
+
+
+/* ===============================
+   BOTTOM
+================================ */
+
+.boutique-footer__bottom {
+  width: min(calc(100% - 50px), 1450px);
+
+  margin: 0 auto;
+
+  padding: 24px 0 28px;
+
+  border-top:
+    1px solid var(--footer-border);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 30px;
+}
+
+.boutique-footer__copyright {
+  font-size: 10px;
+
+  letter-spacing: 0.05em;
+
+  opacity: 0.55;
+}
+
+
+/* ===============================
+   PAYMENT ICONS
+================================ */
+
+.boutique-footer__payments {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+}
+
+.boutique-footer__payments span {
+  display: flex;
+
+  align-items: center;
+}
+
+.boutique-footer__payments svg {
+  width: 38px;
+
+  height: auto;
+}
+
+
+/* ===============================
+   TABLET
+================================ */
+
+@media screen and (max-width: 950px) {
+
+  .boutique-footer__inner {
+    grid-template-columns:
+      repeat(2, 1fr);
+
+    gap: 50px;
+  }
+
+}
+
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media screen and (max-width: 600px) {
+
+  .boutique-footer__inner {
+    width: calc(100% - 40px);
+
+    padding:
+      55px
+      0
+      45px;
+
+    grid-template-columns: 1fr;
+
+    gap: 40px;
+  }
+
+  .boutique-footer__logo span {
+    font-size: 27px;
+  }
+
+  .boutique-footer__bottom {
+    width: calc(100% - 40px);
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Boutique footer",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Thoughtfully selected fashion for everyday expression."
+    },
+
+
+    {
+      "type": "header",
+      "content": "Shop menu"
+    },
+
+    {
+      "type": "text",
+      "id": "menu_1_heading",
+      "label": "Heading",
+      "default": "SHOP"
+    },
+
+    {
+      "type": "link_list",
+      "id": "menu_1",
+      "label": "Menu"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Information menu"
+    },
+
+    {
+      "type": "text",
+      "id": "menu_2_heading",
+      "label": "Heading",
+      "default": "INFORMATION"
+    },
+
+    {
+      "type": "link_list",
+      "id": "menu_2",
+      "label": "Menu"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+
+    {
+      "type": "text",
+      "id": "contact_heading",
+      "label": "Heading",
+      "default": "NEED HELP?"
+    },
+
+    {
+      "type": "richtext",
+      "id": "contact_text",
+      "label": "Text",
+      "default": "<p>Questions about sizing, styling or your order? We're here to help.</p>"
+    },
+
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Email",
+      "default": "hello@example.com"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Social media"
+    },
+
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram"
+    },
+
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook"
+    },
+
+    {
+      "type": "url",
+      "id": "pinterest_url",
+      "label": "Pinterest"
+    },
+
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Bottom bar"
+    },
+
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "All rights reserved."
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#F5F1EA"
+    },
+
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#3A3A3A"
+    }
+
+  ],
+
+  "presets": [
+    {
+      "name": "Boutique footer"
+    }
+  ]
+}
+{% endschema %}

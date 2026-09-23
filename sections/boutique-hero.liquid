@@ -1,0 +1,528 @@
+<section
+  class="boutique-hero"
+  style="
+    --hero-bg: {{ section.settings.background_color }};
+    --hero-text: {{ section.settings.text_color }};
+    --hero-height: {{ section.settings.desktop_height }}px;
+  "
+>
+
+  <div class="boutique-hero__content">
+
+    <div class="boutique-hero__copy">
+
+      {% if section.settings.eyebrow != blank %}
+        <p class="boutique-hero__eyebrow">
+          {{ section.settings.eyebrow }}
+        </p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h1 class="boutique-hero__heading">
+          {{ section.settings.heading }}
+        </h1>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <div class="boutique-hero__description">
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.button_1_text != blank
+        or section.settings.button_2_text != blank
+      %}
+
+        <div class="boutique-hero__buttons">
+
+          {% if section.settings.button_1_text != blank %}
+            <a
+              href="{{ section.settings.button_1_link | default: '#' }}"
+              class="boutique-button boutique-button--primary"
+            >
+              {{ section.settings.button_1_text }}
+            </a>
+          {% endif %}
+
+          {% if section.settings.button_2_text != blank %}
+            <a
+              href="{{ section.settings.button_2_link | default: '#' }}"
+              class="boutique-button boutique-button--secondary"
+            >
+              {{ section.settings.button_2_text }}
+            </a>
+          {% endif %}
+
+        </div>
+
+      {% endif %}
+
+    </div>
+
+
+    <div class="boutique-hero__media">
+
+      {% if section.settings.image != blank %}
+
+        {{
+          section.settings.image
+          | image_url: width: 2000
+          | image_tag:
+            loading: 'eager',
+            widths: '600, 900, 1200, 1600, 2000',
+            sizes: '(min-width: 768px) 55vw, 100vw',
+            class: 'boutique-hero__image'
+        }}
+
+      {% else %}
+
+        <div class="boutique-hero__placeholder">
+          {{ 'lifestyle-1' | placeholder_svg_tag }}
+        </div>
+
+      {% endif %}
+
+      {% if section.settings.image_caption != blank %}
+        <div class="boutique-hero__caption">
+          {{ section.settings.image_caption }}
+        </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</section>
+
+
+{% stylesheet %}
+
+/* ==========================================
+   HERO
+========================================== */
+
+.boutique-hero {
+  width: 100%;
+
+  background: var(--hero-bg);
+  color: var(--hero-text);
+
+  overflow: hidden;
+}
+
+.boutique-hero__content {
+  min-height: var(--hero-height);
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 45%)
+    minmax(0, 55%);
+}
+
+
+/* ==========================================
+   LEFT CONTENT
+========================================== */
+
+.boutique-hero__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding:
+    clamp(50px, 7vw, 110px)
+    clamp(35px, 7vw, 120px);
+}
+
+.boutique-hero__eyebrow {
+  margin: 0 0 22px;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  letter-spacing: 0.24em;
+
+  text-transform: uppercase;
+}
+
+.boutique-hero__heading {
+  margin: 0;
+
+  max-width: 620px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(48px, 5vw, 82px);
+
+  line-height: 0.98;
+
+  font-weight: 400;
+
+  letter-spacing: -0.025em;
+}
+
+.boutique-hero__description {
+  max-width: 520px;
+
+  margin-top: 24px;
+
+  font-size: 15px;
+
+  line-height: 1.7;
+
+  opacity: 0.78;
+}
+
+.boutique-hero__description p {
+  margin: 0;
+}
+
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+.boutique-hero__buttons {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin-top: 33px;
+}
+
+.boutique-button {
+  min-height: 48px;
+
+  padding: 0 25px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.boutique-button--primary {
+  background: var(--hero-text);
+  color: var(--hero-bg);
+
+  border: 1px solid var(--hero-text);
+}
+
+.boutique-button--primary:hover {
+  background: transparent;
+  color: var(--hero-text);
+}
+
+.boutique-button--secondary {
+  background: transparent;
+  color: var(--hero-text);
+
+  border: 1px solid currentColor;
+}
+
+.boutique-button--secondary:hover {
+  background: var(--hero-text);
+  color: var(--hero-bg);
+}
+
+
+/* ==========================================
+   IMAGE
+========================================== */
+
+.boutique-hero__media {
+  position: relative;
+
+  min-height: var(--hero-height);
+
+  overflow: hidden;
+}
+
+.boutique-hero__image {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  object-position: center;
+}
+
+.boutique-hero__placeholder {
+  position: absolute;
+
+  inset: 0;
+
+  background: #ddd8d0;
+}
+
+.boutique-hero__placeholder svg {
+  width: 100%;
+  height: 100%;
+}
+
+.boutique-hero__caption {
+  position: absolute;
+
+  right: 30px;
+  bottom: 28px;
+
+  z-index: 2;
+
+  max-width: 200px;
+
+  color: #fff;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 18px;
+  font-style: italic;
+
+  line-height: 1.3;
+
+  text-align: right;
+}
+
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media screen and (max-width: 1000px) {
+
+  .boutique-hero__content {
+    grid-template-columns: 47% 53%;
+  }
+
+  .boutique-hero__copy {
+    padding: 55px 40px;
+  }
+
+  .boutique-hero__heading {
+    font-size:
+      clamp(42px, 5vw, 62px);
+  }
+
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media screen and (max-width: 767px) {
+
+  .boutique-hero__content {
+    min-height: auto;
+
+    grid-template-columns: 1fr;
+  }
+
+  .boutique-hero__copy {
+    order: 2;
+
+    padding: 40px 22px 48px;
+  }
+
+  .boutique-hero__media {
+    order: 1;
+
+    min-height: 520px;
+  }
+
+  .boutique-hero__heading {
+    font-size: clamp(42px, 13vw, 58px);
+  }
+
+  .boutique-hero__description {
+    font-size: 14px;
+  }
+
+  .boutique-hero__buttons {
+    width: 100%;
+  }
+
+  .boutique-button {
+    flex: 1;
+
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+}
+
+
+/* ==========================================
+   SMALL MOBILE
+========================================== */
+
+@media screen and (max-width: 420px) {
+
+  .boutique-hero__media {
+    min-height: 440px;
+  }
+
+  .boutique-hero__buttons {
+    flex-direction: column;
+  }
+
+  .boutique-button {
+    width: 100%;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Boutique hero",
+  "tag": "section",
+  "class": "section-boutique-hero",
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "THE NEW COLLECTION"
+    },
+
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Modern Styles\nTimeless You"
+    },
+
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Effortless fashion for every chapter of your story.</p>"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+
+    {
+      "type": "text",
+      "id": "button_1_text",
+      "label": "Primary button",
+      "default": "SHOP NEW ARRIVALS"
+    },
+
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Primary button link"
+    },
+
+    {
+      "type": "text",
+      "id": "button_2_text",
+      "label": "Secondary button",
+      "default": "EXPLORE EDITS"
+    },
+
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Secondary button link"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Image"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image"
+    },
+
+    {
+      "type": "text",
+      "id": "image_caption",
+      "label": "Image caption",
+      "default": "Fashion feels better here"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 500,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Desktop height",
+      "default": 680
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#EAE5DD"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    }
+
+  ],
+
+  "presets": [
+    {
+      "name": "Boutique hero"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "boutique-contact",
+      "settings": {
+        "eyebrow": "GET IN TOUCH",
+        "heading": "We'd Love to Hear From You",
+        "form_heading": "Send a Message",
+        "form_description": "Complete the form below and we'll be in touch."
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

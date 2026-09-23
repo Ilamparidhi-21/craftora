@@ -1,0 +1,786 @@
+{% comment %}
+  Boutique Article Page
+{% endcomment %}
+
+<section
+  class="boutique-article"
+  style="
+    --article-bg: {{ section.settings.background_color }};
+    --article-text: {{ section.settings.text_color }};
+    --article-border: {{ section.settings.border_color }};
+    --article-width: {{ section.settings.content_width }}px;
+  "
+>
+
+  <header class="boutique-article__header">
+
+    <a
+      href="{{ blog.url }}"
+      class="boutique-article__back"
+    >
+      ← BACK TO {{ blog.title | upcase }}
+    </a>
+
+    {% if article.tags.size > 0 %}
+      <p class="boutique-article__tag">
+        {{ article.tags.first }}
+      </p>
+    {% endif %}
+
+    <h1>
+      {{ article.title }}
+    </h1>
+
+    <div class="boutique-article__meta">
+
+      {{ article.published_at | date: "%B %d, %Y" }}
+
+      {% if section.settings.show_author %}
+        <span>— {{ article.author }}</span>
+      {% endif %}
+
+    </div>
+
+  </header>
+
+
+  {% if article.image and section.settings.show_featured_image %}
+
+    <div class="boutique-article__hero">
+
+      {{
+        article.image
+        | image_url: width: 2200
+        | image_tag:
+          loading: 'eager',
+          widths: '750, 1100, 1500, 1800, 2200',
+          sizes: '100vw'
+      }}
+
+    </div>
+
+  {% endif %}
+
+
+  <div class="boutique-article__content rte">
+
+    {{ article.content }}
+
+  </div>
+
+
+  {% if article.tags.size > 0 and section.settings.show_tags %}
+
+    <div class="boutique-article__tags">
+
+      {% for tag in article.tags %}
+
+        <a href="{{ blog.url }}/tagged/{{ tag | handle }}">
+          {{ tag }}
+        </a>
+
+      {% endfor %}
+
+    </div>
+
+  {% endif %}
+
+
+  <div class="boutique-article__footer">
+
+    <a href="{{ blog.url }}">
+      ← BACK TO JOURNAL
+    </a>
+
+  </div>
+
+
+  {% if blog.comments_enabled? %}
+
+    <div class="boutique-article-comments">
+
+      <h2>
+        Comments
+      </h2>
+
+      {% paginate article.comments by 10 %}
+
+        {% for comment in article.comments %}
+
+          <article class="boutique-article-comment">
+
+            <div class="boutique-article-comment__meta">
+
+              <strong>
+                {{ comment.author }}
+              </strong>
+
+              <span>
+                {{ comment.created_at | date: "%B %d, %Y" }}
+              </span>
+
+            </div>
+
+            <div>
+              {{ comment.content }}
+            </div>
+
+          </article>
+
+        {% endfor %}
+
+        {% if paginate.pages > 1 %}
+          {{ paginate | default_pagination: anchor: 'comments' }}
+        {% endif %}
+
+      {% endpaginate %}
+
+
+      {% form 'new_comment', article %}
+
+        <div class="boutique-comment-form">
+
+          <h2>
+            Leave a Comment
+          </h2>
+
+          {% if form.posted_successfully? %}
+
+            <p class="boutique-comment-form__success">
+              Thank you. Your comment has been submitted.
+            </p>
+
+          {% endif %}
+
+          {{ form.errors | default_errors }}
+
+
+          <div class="boutique-comment-form__row">
+
+            <div class="boutique-comment-form__field">
+
+              <label for="CommentAuthor">
+                Name
+              </label>
+
+              <input
+                id="CommentAuthor"
+                type="text"
+                name="comment[author]"
+                value="{{ form.author }}"
+                required
+              >
+
+            </div>
+
+
+            <div class="boutique-comment-form__field">
+
+              <label for="CommentEmail">
+                Email
+              </label>
+
+              <input
+                id="CommentEmail"
+                type="email"
+                name="comment[email]"
+                value="{{ form.email }}"
+                required
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="boutique-comment-form__field">
+
+            <label for="CommentBody">
+              Comment
+            </label>
+
+            <textarea
+              id="CommentBody"
+              name="comment[body]"
+              rows="7"
+              required
+            >{{ form.body }}</textarea>
+
+          </div>
+
+
+          <button type="submit">
+            POST COMMENT
+          </button>
+
+        </div>
+
+      {% endform %}
+
+    </div>
+
+  {% endif %}
+
+</section>
+
+
+{% stylesheet %}
+
+.boutique-article {
+  padding:
+    70px
+    25px
+    100px;
+
+  background: var(--article-bg);
+  color: var(--article-text);
+}
+
+
+/* HEADER */
+
+.boutique-article__header {
+  width: min(100%, 1000px);
+
+  margin:
+    0
+    auto
+    55px;
+
+  text-align: center;
+}
+
+.boutique-article__back {
+  display: inline-block;
+
+  margin-bottom: 40px;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 8px;
+
+  letter-spacing: 0.15em;
+}
+
+.boutique-article__tag {
+  margin:
+    0
+    0
+    15px;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.18em;
+
+  text-transform: uppercase;
+}
+
+.boutique-article__header h1 {
+  max-width: 900px;
+
+  margin:
+    0
+    auto;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(48px, 7vw, 88px);
+
+  line-height: 1;
+
+  font-weight: 400;
+}
+
+.boutique-article__meta {
+  margin-top: 25px;
+
+  font-size: 9px;
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+
+  opacity: 0.55;
+}
+
+
+/* HERO */
+
+.boutique-article__hero {
+  width: min(100%, 1500px);
+
+  height:
+    clamp(450px, 65vw, 800px);
+
+  margin:
+    0
+    auto
+    70px;
+
+  overflow: hidden;
+
+  background: #e8e3dc;
+}
+
+.boutique-article__hero img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+/* ARTICLE CONTENT */
+
+.boutique-article__content {
+  width:
+    min(
+      100%,
+      var(--article-width)
+    );
+
+  margin: 0 auto;
+
+  font-size: 16px;
+
+  line-height: 1.9;
+}
+
+.boutique-article__content > *:first-child {
+  margin-top: 0;
+}
+
+.boutique-article__content p {
+  margin:
+    0
+    0
+    24px;
+
+  opacity: 0.82;
+}
+
+.boutique-article__content h2,
+.boutique-article__content h3,
+.boutique-article__content h4 {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-weight: 400;
+
+  line-height: 1.15;
+}
+
+.boutique-article__content h2 {
+  margin:
+    60px
+    0
+    22px;
+
+  font-size:
+    clamp(34px, 4vw, 48px);
+}
+
+.boutique-article__content h3 {
+  margin:
+    45px
+    0
+    18px;
+
+  font-size: 30px;
+}
+
+.boutique-article__content img {
+  max-width: 100%;
+  height: auto;
+
+  display: block;
+
+  margin:
+    45px
+    auto;
+}
+
+.boutique-article__content blockquote {
+  margin:
+    50px
+    0;
+
+  padding:
+    15px
+    0
+    15px
+    35px;
+
+  border-left:
+    1px solid var(--article-text);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(25px, 3vw, 34px);
+
+  line-height: 1.45;
+
+  font-style: italic;
+}
+
+.boutique-article__content a {
+  color: inherit;
+
+  text-underline-offset: 4px;
+}
+
+
+/* TAGS */
+
+.boutique-article__tags {
+  width:
+    min(
+      100%,
+      var(--article-width)
+    );
+
+  margin:
+    50px
+    auto
+    0;
+
+  padding-top: 25px;
+
+  border-top:
+    1px solid var(--article-border);
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.boutique-article__tags a {
+  padding:
+    8px
+    12px;
+
+  border:
+    1px solid var(--article-border);
+
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 8px;
+
+  letter-spacing: 0.1em;
+
+  text-transform: uppercase;
+}
+
+
+/* FOOTER */
+
+.boutique-article__footer {
+  width:
+    min(
+      100%,
+      var(--article-width)
+    );
+
+  margin:
+    50px
+    auto
+    0;
+
+  padding-top: 25px;
+
+  border-top:
+    1px solid var(--article-border);
+}
+
+.boutique-article__footer a {
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 8px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+}
+
+
+/* COMMENTS */
+
+.boutique-article-comments {
+  width:
+    min(
+      100%,
+      var(--article-width)
+    );
+
+  margin:
+    80px
+    auto
+    0;
+
+  padding-top: 50px;
+
+  border-top:
+    1px solid var(--article-border);
+}
+
+.boutique-article-comments > h2,
+.boutique-comment-form h2 {
+  margin:
+    0
+    0
+    30px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 34px;
+
+  font-weight: 400;
+}
+
+.boutique-article-comment {
+  padding:
+    25px
+    0;
+
+  border-bottom:
+    1px solid var(--article-border);
+
+  font-size: 14px;
+
+  line-height: 1.7;
+}
+
+.boutique-article-comment__meta {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 10px;
+
+  font-size: 10px;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+
+/* COMMENT FORM */
+
+.boutique-comment-form {
+  margin-top: 65px;
+}
+
+.boutique-comment-form__row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+.boutique-comment-form__field {
+  margin-bottom: 22px;
+}
+
+.boutique-comment-form__field label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 8px;
+
+  letter-spacing: 0.13em;
+
+  text-transform: uppercase;
+}
+
+.boutique-comment-form__field input,
+.boutique-comment-form__field textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding:
+    13px
+    0;
+
+  border: 0;
+
+  border-bottom:
+    1px solid var(--article-border);
+
+  border-radius: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  font: inherit;
+}
+
+.boutique-comment-form button {
+  min-height: 50px;
+
+  padding:
+    0
+    30px;
+
+  border:
+    1px solid var(--article-text);
+
+  background: var(--article-text);
+
+  color: var(--article-bg);
+
+  font-size: 9px;
+
+  letter-spacing: 0.15em;
+
+  cursor: pointer;
+}
+
+
+/* MOBILE */
+
+@media screen and (max-width: 650px) {
+
+  .boutique-article {
+    padding:
+      50px
+      17px
+      70px;
+  }
+
+  .boutique-article__header {
+    margin-bottom: 40px;
+  }
+
+  .boutique-article__back {
+    margin-bottom: 30px;
+  }
+
+  .boutique-article__header h1 {
+    font-size: 48px;
+  }
+
+  .boutique-article__hero {
+    height: 430px;
+
+    margin-bottom: 50px;
+  }
+
+  .boutique-article__content {
+    font-size: 15px;
+  }
+
+  .boutique-comment-form__row {
+    grid-template-columns: 1fr;
+
+    gap: 0;
+  }
+
+  .boutique-comment-form button {
+    width: 100%;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Boutique article",
+
+  "settings": [
+
+    {
+      "type": "checkbox",
+      "id": "show_featured_image",
+      "label": "Show featured image",
+      "default": true
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": true
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show article tags",
+      "default": true
+    },
+
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Article content width",
+      "min": 600,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 750
+    },
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borders",
+      "default": "#DDD8D1"
+    }
+
+  ]
+}
+{% endschema %}

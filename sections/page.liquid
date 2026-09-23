@@ -1,0 +1,675 @@
+{% comment %}
+  Boutique general page template
+{% endcomment %}
+
+<section
+  class="boutique-page"
+  style="
+    --page-bg: {{ section.settings.background_color }};
+    --page-text: {{ section.settings.text_color }};
+    --page-border: {{ section.settings.border_color }};
+    --page-content-width: {{ section.settings.content_width }}px;
+  "
+>
+
+  <!-- PAGE HEADER -->
+  <div class="boutique-page__header">
+
+    {% if section.settings.eyebrow != blank %}
+      <p class="boutique-page__eyebrow">
+        {{ section.settings.eyebrow }}
+      </p>
+    {% endif %}
+
+    <h1>
+      {{ page.title }}
+    </h1>
+
+    {% if section.settings.intro_text != blank %}
+      <div class="boutique-page__intro">
+        {{ section.settings.intro_text }}
+      </div>
+    {% endif %}
+
+  </div>
+
+
+  <!-- OPTIONAL HERO IMAGE -->
+  {% if section.settings.show_image and section.settings.image != blank %}
+
+    <div class="boutique-page__image">
+
+      {{
+        section.settings.image
+        | image_url: width: 2200
+        | image_tag:
+          loading: 'eager',
+          widths: '700, 1000, 1400, 1800, 2200',
+          sizes: '100vw'
+      }}
+
+    </div>
+
+  {% endif %}
+
+
+  <!-- PAGE CONTENT -->
+  <div
+    class="
+      boutique-page__content
+      {% if section.settings.content_alignment == 'center' %}
+        boutique-page__content--center
+      {% endif %}
+    "
+  >
+
+    {% if section.settings.show_divider %}
+      <div class="boutique-page__divider"></div>
+    {% endif %}
+
+
+    {% if page.content != blank %}
+
+      <div class="boutique-page__richtext rte">
+
+        {{ page.content }}
+
+      </div>
+
+    {% else %}
+
+      <div class="boutique-page__empty">
+
+        <p>
+          Add content to this page from Shopify Admin.
+        </p>
+
+      </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+
+{% stylesheet %}
+
+/* ===================================
+   GENERAL PAGE
+=================================== */
+
+.boutique-page {
+  width: 100%;
+
+  padding:
+    65px
+    25px
+    95px;
+
+  box-sizing: border-box;
+
+  background: var(--page-bg);
+  color: var(--page-text);
+}
+
+
+/* ===================================
+   HEADER
+=================================== */
+
+.boutique-page__header {
+  max-width: 850px;
+
+  margin:
+    0
+    auto
+    50px;
+
+  text-align: center;
+}
+
+.boutique-page__eyebrow {
+  margin:
+    0
+    0
+    15px;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+}
+
+.boutique-page__header h1 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(48px, 6vw, 82px);
+
+  line-height: 1;
+
+  font-weight: 400;
+
+  letter-spacing: -0.02em;
+}
+
+.boutique-page__intro {
+  max-width: 620px;
+
+  margin:
+    20px
+    auto
+    0;
+
+  font-size: 14px;
+
+  line-height: 1.75;
+
+  opacity: 0.67;
+}
+
+.boutique-page__intro p {
+  margin: 0;
+}
+
+
+/* ===================================
+   HERO IMAGE
+=================================== */
+
+.boutique-page__image {
+  width:
+    min(
+      calc(100% - 10px),
+      1450px
+    );
+
+  height:
+    clamp(
+      350px,
+      48vw,
+      650px
+    );
+
+  margin:
+    0
+    auto
+    65px;
+
+  overflow: hidden;
+
+  background: #ece7df;
+}
+
+.boutique-page__image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+/* ===================================
+   CONTENT AREA
+=================================== */
+
+.boutique-page__content {
+  width: min(
+    100%,
+    var(--page-content-width)
+  );
+
+  margin: 0 auto;
+}
+
+.boutique-page__content--center {
+  text-align: center;
+}
+
+
+/* DIVIDER */
+
+.boutique-page__divider {
+  width: 45px;
+  height: 1px;
+
+  margin:
+    0
+    auto
+    45px;
+
+  background: var(--page-text);
+}
+
+
+/* ===================================
+   RICH TEXT
+=================================== */
+
+.boutique-page__richtext {
+  font-size: 15px;
+
+  line-height: 1.85;
+}
+
+.boutique-page__richtext > *:first-child {
+  margin-top: 0;
+}
+
+.boutique-page__richtext > *:last-child {
+  margin-bottom: 0;
+}
+
+
+/* HEADINGS */
+
+.boutique-page__richtext h2,
+.boutique-page__richtext h3,
+.boutique-page__richtext h4 {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-weight: 400;
+
+  line-height: 1.2;
+}
+
+.boutique-page__richtext h2 {
+  margin:
+    55px
+    0
+    20px;
+
+  font-size:
+    clamp(30px, 3vw, 42px);
+}
+
+.boutique-page__richtext h3 {
+  margin:
+    40px
+    0
+    15px;
+
+  font-size: 27px;
+}
+
+.boutique-page__richtext h4 {
+  margin:
+    30px
+    0
+    12px;
+
+  font-size: 21px;
+}
+
+
+/* PARAGRAPHS */
+
+.boutique-page__richtext p {
+  margin:
+    0
+    0
+    20px;
+
+  opacity: 0.78;
+}
+
+
+/* LINKS */
+
+.boutique-page__richtext a {
+  color: inherit;
+
+  text-decoration:
+    underline;
+
+  text-underline-offset:
+    4px;
+}
+
+
+/* LISTS */
+
+.boutique-page__richtext ul,
+.boutique-page__richtext ol {
+  margin:
+    22px
+    0;
+
+  padding-left: 25px;
+}
+
+.boutique-page__richtext li {
+  margin-bottom: 8px;
+}
+
+
+/* QUOTE */
+
+.boutique-page__richtext blockquote {
+  margin:
+    45px
+    0;
+
+  padding:
+    25px
+    0
+    25px
+    30px;
+
+  border-left:
+    1px solid var(--page-text);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(22px, 3vw, 30px);
+
+  line-height: 1.45;
+
+  font-style: italic;
+}
+
+
+/* TABLES */
+
+.boutique-page__richtext table {
+  width: 100%;
+
+  margin:
+    35px
+    0;
+
+  border-collapse: collapse;
+
+  font-size: 13px;
+}
+
+.boutique-page__richtext th,
+.boutique-page__richtext td {
+  padding:
+    13px
+    12px;
+
+  border:
+    1px solid var(--page-border);
+
+  text-align: left;
+}
+
+.boutique-page__richtext th {
+  font-size: 9px;
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+
+/* IMAGES INSIDE PAGE CONTENT */
+
+.boutique-page__richtext img {
+  max-width: 100%;
+  height: auto;
+
+  margin:
+    30px
+    auto;
+
+  display: block;
+}
+
+
+/* HORIZONTAL RULE */
+
+.boutique-page__richtext hr {
+  margin:
+    45px
+    0;
+
+  border: 0;
+
+  border-top:
+    1px solid var(--page-border);
+}
+
+
+/* ===================================
+   EMPTY CONTENT
+=================================== */
+
+.boutique-page__empty {
+  padding:
+    60px
+    20px;
+
+  border:
+    1px solid var(--page-border);
+
+  text-align: center;
+
+  font-size: 13px;
+
+  opacity: 0.55;
+}
+
+
+/* ===================================
+   TABLET
+=================================== */
+
+@media screen and (max-width: 900px) {
+
+  .boutique-page {
+    padding:
+      55px
+      22px
+      75px;
+  }
+
+}
+
+
+/* ===================================
+   MOBILE
+=================================== */
+
+@media screen and (max-width: 600px) {
+
+  .boutique-page {
+    padding:
+      45px
+      18px
+      60px;
+  }
+
+  .boutique-page__header {
+    margin-bottom: 38px;
+  }
+
+  .boutique-page__header h1 {
+    font-size: 45px;
+  }
+
+  .boutique-page__image {
+    width: 100%;
+
+    height: 390px;
+
+    margin-bottom: 45px;
+  }
+
+  .boutique-page__richtext {
+    font-size: 14px;
+  }
+
+  .boutique-page__richtext h2 {
+    margin-top: 40px;
+  }
+
+  .boutique-page__richtext blockquote {
+    margin:
+      35px
+      0;
+
+    padding-left: 20px;
+  }
+
+}
+
+
+/* ===================================
+   SMALL MOBILE
+=================================== */
+
+@media screen and (max-width: 400px) {
+
+  .boutique-page__header h1 {
+    font-size: 40px;
+  }
+
+  .boutique-page__image {
+    height: 330px;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Boutique page",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Page header"
+    },
+
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "OUR STORY"
+    },
+
+    {
+      "type": "richtext",
+      "id": "intro_text",
+      "label": "Intro text"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Image"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Show page image",
+      "default": false
+    },
+
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Page image"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 600,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 850
+    },
+
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider",
+      "default": true
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borders",
+      "default": "#DDD8D1"
+    }
+
+  ],
+
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  }
+}
+{% endschema %}

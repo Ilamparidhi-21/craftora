@@ -1,0 +1,390 @@
+<section
+  class="boutique-editorial boutique-editorial--{{ section.settings.image_position }}"
+  style="
+    --editorial-bg: {{ section.settings.background_color }};
+    --editorial-text: {{ section.settings.text_color }};
+    --editorial-height: {{ section.settings.desktop_height }}px;
+  "
+>
+  <div class="boutique-editorial__inner">
+
+    <div class="boutique-editorial__media">
+
+      {% if section.settings.image != blank %}
+        {{
+          section.settings.image
+          | image_url: width: 1800
+          | image_tag:
+            loading: 'lazy',
+            widths: '600, 900, 1200, 1500, 1800',
+            sizes: '(min-width: 768px) 55vw, 100vw',
+            class: 'boutique-editorial__image'
+        }}
+      {% else %}
+        {{ 'lifestyle-2' | placeholder_svg_tag }}
+      {% endif %}
+
+    </div>
+
+
+    <div class="boutique-editorial__content">
+
+      {% if section.settings.eyebrow != blank %}
+        <p class="boutique-editorial__eyebrow">
+          {{ section.settings.eyebrow }}
+        </p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2>
+          {{ section.settings.heading }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.text != blank %}
+        <div class="boutique-editorial__text">
+          {{ section.settings.text }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <a
+          href="{{ section.settings.button_link | default: '#' }}"
+          class="boutique-editorial__button"
+        >
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+
+    </div>
+
+  </div>
+</section>
+
+
+{% stylesheet %}
+
+.boutique-editorial {
+  width: 100%;
+  background: var(--editorial-bg);
+  color: var(--editorial-text);
+}
+
+.boutique-editorial__inner {
+  min-height: var(--editorial-height);
+
+  display: grid;
+  grid-template-columns: 58% 42%;
+}
+
+
+/* IMAGE RIGHT */
+
+.boutique-editorial--right .boutique-editorial__media {
+  order: 2;
+}
+
+.boutique-editorial--right .boutique-editorial__content {
+  order: 1;
+}
+
+
+/* MEDIA */
+
+.boutique-editorial__media {
+  position: relative;
+
+  min-height: var(--editorial-height);
+
+  overflow: hidden;
+}
+
+.boutique-editorial__media img,
+.boutique-editorial__media svg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  transition: transform 0.8s ease;
+}
+
+.boutique-editorial:hover
+.boutique-editorial__image {
+  transform: scale(1.015);
+}
+
+
+/* CONTENT */
+
+.boutique-editorial__content {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: flex-start;
+
+  padding:
+    clamp(50px, 7vw, 110px)
+    clamp(40px, 6vw, 100px);
+}
+
+.boutique-editorial__eyebrow {
+  margin: 0 0 20px;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+}
+
+.boutique-editorial__content h2 {
+  max-width: 520px;
+
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: clamp(42px, 4vw, 68px);
+
+  line-height: 1.02;
+
+  font-weight: 400;
+
+  letter-spacing: -0.02em;
+}
+
+.boutique-editorial__text {
+  max-width: 470px;
+
+  margin-top: 24px;
+
+  font-size: 14px;
+  line-height: 1.8;
+
+  opacity: 0.72;
+}
+
+.boutique-editorial__text p {
+  margin: 0;
+}
+
+
+/* BUTTON */
+
+.boutique-editorial__button {
+  min-height: 47px;
+
+  margin-top: 31px;
+
+  padding: 0 25px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid currentColor;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+.boutique-editorial__button:hover {
+  background: var(--editorial-text);
+  color: var(--editorial-bg);
+}
+
+
+/* TABLET */
+
+@media screen and (max-width: 900px) {
+
+  .boutique-editorial__inner {
+    grid-template-columns: 55% 45%;
+  }
+
+  .boutique-editorial__content {
+    padding: 50px 35px;
+  }
+
+}
+
+
+/* MOBILE */
+
+@media screen and (max-width: 767px) {
+
+  .boutique-editorial__inner {
+    min-height: auto;
+
+    grid-template-columns: 1fr;
+  }
+
+  .boutique-editorial__media {
+    min-height: 500px;
+
+    order: 1 !important;
+  }
+
+  .boutique-editorial__content {
+    order: 2 !important;
+
+    padding: 45px 22px 55px;
+  }
+
+  .boutique-editorial__content h2 {
+    font-size: clamp(40px, 12vw, 56px);
+  }
+
+}
+
+
+/* SMALL MOBILE */
+
+@media screen and (max-width: 450px) {
+
+  .boutique-editorial__media {
+    min-height: 420px;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Editorial banner",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Image"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "THE EDIT"
+    },
+
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Every Outfit\nA New Mood"
+    },
+
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Modern silhouettes, elevated essentials and effortless pieces designed for everyday luxury.</p>"
+    },
+
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "DISCOVER MORE"
+    },
+
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "Desktop height",
+      "min": 450,
+      "max": 850,
+      "step": 20,
+      "unit": "px",
+      "default": 610
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#DED8CF"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    }
+
+  ],
+
+  "presets": [
+    {
+      "name": "Editorial banner"
+    }
+  ]
+}
+{% endschema %}

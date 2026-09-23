@@ -1,0 +1,1174 @@
+{% layout none %}
+
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>
+      {{ shop.name }} Gift Card
+    </title>
+
+    {% render 'css-variables' %}
+    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+
+    {{ 'vendor/qrcode.js' | shopify_asset_url | script_tag }}
+
+    {{ content_for_header }}
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        background: #f3efe9;
+        color: #171717;
+        font-family:
+          Arial,
+          Helvetica,
+          sans-serif;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+
+      /* =================================
+         PAGE
+      ================================= */
+
+      .gift-page {
+        min-height: 100vh;
+
+        padding:
+          40px
+          24px
+          70px;
+      }
+
+      .gift-page__inner {
+        width: min(100%, 1180px);
+
+        margin: 0 auto;
+      }
+
+
+      /* =================================
+         HEADER
+      ================================= */
+
+      .gift-header {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 25px;
+
+        margin-bottom: 55px;
+      }
+
+      .gift-header__brand {
+        color: inherit;
+
+        text-decoration: none;
+
+        font-family:
+          Georgia,
+          "Times New Roman",
+          serif;
+
+        font-size: 26px;
+
+        letter-spacing: 0.04em;
+      }
+
+      .gift-header__logo {
+        display: block;
+
+        width: auto;
+        max-width: 180px;
+        max-height: 60px;
+      }
+
+      .gift-header__shop {
+        padding-bottom: 4px;
+
+        border-bottom:
+          1px solid currentColor;
+
+        color: inherit;
+
+        text-decoration: none;
+
+        font-size: 9px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.15em;
+
+        text-transform: uppercase;
+      }
+
+
+      /* =================================
+         INTRO
+      ================================= */
+
+      .gift-intro {
+        max-width: 760px;
+
+        margin:
+          0
+          auto
+          45px;
+
+        text-align: center;
+      }
+
+      .gift-intro__eyebrow {
+        margin:
+          0
+          0
+          14px;
+
+        font-size: 9px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.22em;
+
+        text-transform: uppercase;
+      }
+
+      .gift-intro h1 {
+        margin: 0;
+
+        font-family:
+          Georgia,
+          "Times New Roman",
+          serif;
+
+        font-size:
+          clamp(50px, 7vw, 88px);
+
+        line-height: 1;
+
+        font-weight: 400;
+
+        letter-spacing: -0.03em;
+      }
+
+      .gift-intro p {
+        max-width: 540px;
+
+        margin:
+          20px
+          auto
+          0;
+
+        font-size: 14px;
+
+        line-height: 1.7;
+
+        opacity: 0.65;
+      }
+
+
+      /* =================================
+         GRID
+      ================================= */
+
+      .gift-layout {
+        display: grid;
+
+        grid-template-columns:
+          minmax(0, 1.05fr)
+          minmax(0, 0.95fr);
+
+        gap: 24px;
+
+        align-items: stretch;
+      }
+
+
+      /* =================================
+         CARD
+      ================================= */
+
+      .gift-card {
+        position: relative;
+
+        min-height: 570px;
+
+        padding:
+          clamp(35px, 5vw, 65px);
+
+        overflow: hidden;
+
+        background: #171717;
+
+        color: #ffffff;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: space-between;
+      }
+
+      .gift-card::before {
+        content: "";
+
+        position: absolute;
+
+        width: 420px;
+        height: 420px;
+
+        top: -170px;
+        right: -170px;
+
+        border:
+          1px solid rgba(255,255,255,0.16);
+
+        border-radius: 50%;
+      }
+
+      .gift-card::after {
+        content: "";
+
+        position: absolute;
+
+        width: 300px;
+        height: 300px;
+
+        bottom: -170px;
+        left: -130px;
+
+        border:
+          1px solid rgba(255,255,255,0.1);
+
+        border-radius: 50%;
+      }
+
+      .gift-card__top,
+      .gift-card__bottom {
+        position: relative;
+
+        z-index: 1;
+      }
+
+      .gift-card__label {
+        margin: 0;
+
+        font-size: 9px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.2em;
+
+        text-transform: uppercase;
+
+        opacity: 0.7;
+      }
+
+      .gift-card__store {
+        margin:
+          14px
+          0
+          0;
+
+        font-family:
+          Georgia,
+          "Times New Roman",
+          serif;
+
+        font-size:
+          clamp(30px, 4vw, 46px);
+
+        font-weight: 400;
+      }
+
+      .gift-card__balance-label {
+        margin:
+          0
+          0
+          10px;
+
+        font-size: 9px;
+
+        letter-spacing: 0.18em;
+
+        text-transform: uppercase;
+
+        opacity: 0.6;
+      }
+
+      .gift-card__balance {
+        margin: 0;
+
+        font-family:
+          Georgia,
+          "Times New Roman",
+          serif;
+
+        font-size:
+          clamp(60px, 8vw, 100px);
+
+        line-height: 0.9;
+
+        font-weight: 400;
+      }
+
+      .gift-card__status {
+        display: inline-flex;
+
+        margin-top: 25px;
+
+        padding:
+          8px
+          12px;
+
+        border:
+          1px solid rgba(255,255,255,0.35);
+
+        font-size: 8px;
+
+        letter-spacing: 0.14em;
+
+        text-transform: uppercase;
+      }
+
+
+      /* =================================
+         DETAILS PANEL
+      ================================= */
+
+      .gift-details {
+        padding:
+          clamp(35px, 5vw, 60px);
+
+        border:
+          1px solid #d9d3cb;
+
+        background: #ffffff;
+      }
+
+      .gift-details__heading {
+        margin:
+          0
+          0
+          10px;
+
+        font-family:
+          Georgia,
+          "Times New Roman",
+          serif;
+
+        font-size: 35px;
+
+        font-weight: 400;
+      }
+
+      .gift-details__description {
+        margin:
+          0
+          0
+          35px;
+
+        font-size: 13px;
+
+        line-height: 1.7;
+
+        opacity: 0.65;
+      }
+
+
+      /* CODE */
+
+      .gift-code-label {
+        margin:
+          0
+          0
+          9px;
+
+        font-size: 8px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.15em;
+
+        text-transform: uppercase;
+      }
+
+      .gift-code {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin-bottom: 30px;
+      }
+
+      .gift-code__value {
+        flex: 1;
+
+        min-width: 0;
+
+        padding:
+          16px
+          15px;
+
+        border:
+          1px solid #d9d3cb;
+
+        font-family:
+          "Courier New",
+          monospace;
+
+        font-size: 15px;
+
+        letter-spacing: 0.08em;
+
+        word-break: break-all;
+
+        background: #faf8f5;
+      }
+
+      .gift-copy {
+        min-height: 50px;
+
+        padding:
+          0
+          18px;
+
+        border:
+          1px solid #171717;
+
+        background: transparent;
+
+        color: #171717;
+
+        font-size: 8px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.12em;
+
+        text-transform: uppercase;
+
+        cursor: pointer;
+      }
+
+
+      /* =================================
+         QR
+      ================================= */
+
+      .gift-qr {
+        display: flex;
+
+        align-items: center;
+
+        gap: 22px;
+
+        padding:
+          25px
+          0;
+
+        border-top:
+          1px solid #e0dad2;
+
+        border-bottom:
+          1px solid #e0dad2;
+      }
+
+      #gift-qr-code {
+        width: 120px;
+        min-width: 120px;
+        height: 120px;
+
+        padding: 8px;
+
+        background: #ffffff;
+
+        border:
+          1px solid #ddd7cf;
+      }
+
+      #gift-qr-code img,
+      #gift-qr-code canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .gift-qr__content h3 {
+        margin:
+          0
+          0
+          8px;
+
+        font-family:
+          Georgia,
+          "Times New Roman",
+          serif;
+
+        font-size: 22px;
+
+        font-weight: 400;
+      }
+
+      .gift-qr__content p {
+        margin: 0;
+
+        font-size: 12px;
+
+        line-height: 1.6;
+
+        opacity: 0.62;
+      }
+
+
+      /* =================================
+         MESSAGE
+      ================================= */
+
+      .gift-message {
+        margin-top: 30px;
+
+        padding:
+          22px;
+
+        background: #f7f4ef;
+      }
+
+      .gift-message__label {
+        margin:
+          0
+          0
+          8px;
+
+        font-size: 8px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.14em;
+
+        text-transform: uppercase;
+      }
+
+      .gift-message p {
+        margin: 0;
+
+        font-family:
+          Georgia,
+          "Times New Roman",
+          serif;
+
+        font-size: 20px;
+
+        line-height: 1.5;
+      }
+
+
+      /* =================================
+         EXPIRY
+      ================================= */
+
+      .gift-expiry {
+        margin-top: 24px;
+
+        font-size: 12px;
+
+        line-height: 1.6;
+
+        opacity: 0.65;
+      }
+
+
+      /* =================================
+         ACTIONS
+      ================================= */
+
+      .gift-actions {
+        display: grid;
+
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+
+        margin-top: 30px;
+      }
+
+      .gift-action {
+        min-height: 52px;
+
+        padding:
+          0
+          18px;
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border:
+          1px solid #171717;
+
+        background: transparent;
+
+        color: #171717;
+
+        text-decoration: none;
+
+        font-size: 9px;
+
+        font-weight: 600;
+
+        letter-spacing: 0.13em;
+
+        text-transform: uppercase;
+
+        cursor: pointer;
+      }
+
+      .gift-action--primary {
+        background: #171717;
+
+        color: #ffffff;
+      }
+
+
+      /* APPLE WALLET */
+
+      .gift-wallet {
+        margin-top: 22px;
+
+        text-align: center;
+      }
+
+      .gift-wallet img {
+        display: inline-block;
+
+        width: auto;
+
+        max-width: 180px;
+
+        height: auto;
+      }
+
+
+      /* =================================
+         FOOTER
+      ================================= */
+
+      .gift-footer {
+        margin-top: 45px;
+
+        padding-top: 25px;
+
+        border-top:
+          1px solid #d9d3cb;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        gap: 20px;
+
+        font-size: 9px;
+
+        letter-spacing: 0.1em;
+
+        text-transform: uppercase;
+
+        opacity: 0.6;
+      }
+
+
+      /* =================================
+         MOBILE
+      ================================= */
+
+      @media screen and (max-width: 800px) {
+
+        .gift-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .gift-card {
+          min-height: 500px;
+        }
+
+      }
+
+
+      @media screen and (max-width: 550px) {
+
+        .gift-page {
+          padding:
+            25px
+            15px
+            50px;
+        }
+
+        .gift-header {
+          margin-bottom: 40px;
+        }
+
+        .gift-intro {
+          margin-bottom: 35px;
+        }
+
+        .gift-intro h1 {
+          font-size: 50px;
+        }
+
+        .gift-card {
+          min-height: 430px;
+
+          padding:
+            32px
+            25px;
+        }
+
+        .gift-details {
+          padding:
+            32px
+            22px;
+        }
+
+        .gift-code {
+          flex-direction: column;
+
+          align-items: stretch;
+        }
+
+        .gift-copy {
+          width: 100%;
+        }
+
+        .gift-qr {
+          flex-direction: column;
+
+          align-items: flex-start;
+        }
+
+        .gift-actions {
+          grid-template-columns: 1fr;
+        }
+
+        .gift-footer {
+          flex-direction: column;
+        }
+
+      }
+
+
+      /* =================================
+         PRINT
+      ================================= */
+
+      @media print {
+
+        body {
+          background: #ffffff;
+        }
+
+        .gift-page {
+          padding: 0;
+        }
+
+        .gift-header__shop,
+        .gift-copy,
+        .gift-actions,
+        .gift-wallet,
+        .gift-footer {
+          display: none !important;
+        }
+
+        .gift-layout {
+          grid-template-columns:
+            1fr
+            1fr;
+        }
+
+        .gift-card {
+          min-height: 500px;
+
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+      }
+    </style>
+  </head>
+
+
+  <body>
+
+    <main class="gift-page">
+
+      <div class="gift-page__inner">
+
+        <!-- HEADER -->
+
+        <header class="gift-header">
+
+          <a
+            href="{{ routes.root_url }}"
+            class="gift-header__brand"
+          >
+
+            {% if settings.logo != blank %}
+
+              {{
+                settings.logo
+                | image_url: width: 500
+                | image_tag:
+                  loading: 'eager',
+                  alt: shop.name,
+                  class: 'gift-header__logo'
+              }}
+
+            {% else %}
+
+              {{ shop.name }}
+
+            {% endif %}
+
+          </a>
+
+
+          <a
+            href="{{ routes.root_url }}"
+            class="gift-header__shop"
+          >
+            Visit Store →
+          </a>
+
+        </header>
+
+
+        <!-- INTRO -->
+
+        <div class="gift-intro">
+
+          <p class="gift-intro__eyebrow">
+            A GIFT FOR YOU
+          </p>
+
+          <h1>
+            The Gift of Choice
+          </h1>
+
+          <p>
+            Use this gift card online and discover something
+            worth making your own.
+          </p>
+
+        </div>
+
+
+        <div class="gift-layout">
+
+          <!-- VISUAL CARD -->
+
+          <div class="gift-card">
+
+            <div class="gift-card__top">
+
+              <p class="gift-card__label">
+                DIGITAL GIFT CARD
+              </p>
+
+              <h2 class="gift-card__store">
+                {{ shop.name }}
+              </h2>
+
+            </div>
+
+
+            <div class="gift-card__bottom">
+
+              <p class="gift-card__balance-label">
+                Remaining Balance
+              </p>
+
+              <p class="gift-card__balance">
+                {{ gift_card.balance | money }}
+              </p>
+
+
+              {% if gift_card.enabled == false %}
+
+                <div class="gift-card__status">
+                  Disabled
+                </div>
+
+              {% elsif gift_card.expired %}
+
+                <div class="gift-card__status">
+                  Expired
+                </div>
+
+              {% else %}
+
+                <div class="gift-card__status">
+                  Ready to use
+                </div>
+
+              {% endif %}
+
+            </div>
+
+          </div>
+
+
+          <!-- DETAILS -->
+
+          <div class="gift-details">
+
+            <h2 class="gift-details__heading">
+              Your Gift Card
+            </h2>
+
+            <p class="gift-details__description">
+              Enter this code during checkout or scan the QR code
+              when you are ready to shop.
+            </p>
+
+
+            <!-- CODE -->
+
+            <p class="gift-code-label">
+              Gift Card Code
+            </p>
+
+            <div class="gift-code">
+
+              <div
+                class="gift-code__value"
+                id="GiftCardCode"
+              >
+                {{ gift_card.code | format_code }}
+              </div>
+
+              <button
+                type="button"
+                class="gift-copy"
+                id="GiftCardCopy"
+              >
+                Copy
+              </button>
+
+            </div>
+
+
+            <!-- QR CODE -->
+
+            <div class="gift-qr">
+
+              <div
+                id="gift-qr-code"
+                aria-label="Gift card QR code"
+              ></div>
+
+              <div class="gift-qr__content">
+
+                <h3>
+                  Scan to redeem
+                </h3>
+
+                <p>
+                  Scan this code from a compatible device
+                  to access your gift card.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- RECIPIENT MESSAGE -->
+
+            {% if gift_card.message != blank %}
+
+              <div class="gift-message">
+
+                <p class="gift-message__label">
+                  A MESSAGE FOR YOU
+                </p>
+
+                <p>
+                  {{ gift_card.message }}
+                </p>
+
+              </div>
+
+            {% endif %}
+
+
+            <!-- EXPIRY -->
+
+            <div class="gift-expiry">
+
+              {% if gift_card.enabled == false %}
+
+                This gift card is no longer active.
+
+              {% elsif gift_card.expired %}
+
+                This gift card has expired.
+
+              {% elsif gift_card.expires_on %}
+
+                {% assign gift_expiry = gift_card.expires_on | date: '%B %d, %Y' %}
+
+                Valid until {{ gift_expiry }}.
+
+              {% else %}
+
+                This gift card does not currently have an expiration date.
+
+              {% endif %}
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="gift-actions">
+
+              <a
+                href="{{ routes.all_products_collection_url }}"
+                class="gift-action gift-action--primary"
+              >
+                SHOP NOW
+              </a>
+
+              <button
+                type="button"
+                class="gift-action"
+                onclick="window.print()"
+              >
+                PRINT CARD
+              </button>
+
+            </div>
+
+
+            <!-- APPLE WALLET -->
+
+            {% if gift_card.pass_url %}
+
+              <div class="gift-wallet">
+
+                <a href="{{ gift_card.pass_url }}">
+
+                  <img
+                    src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}"
+                    alt="Add to Apple Wallet"
+                    width="180"
+                    height="54"
+                  >
+
+                </a>
+
+              </div>
+
+            {% endif %}
+
+          </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer class="gift-footer">
+
+          <span>
+            {{ shop.name }}
+          </span>
+
+          <span>
+            &copy; {{ 'now' | date: '%Y' }}
+          </span>
+
+        </footer>
+
+      </div>
+
+    </main>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+
+        /* QR CODE */
+
+        const qrElement = document.getElementById('gift-qr-code');
+
+        if (qrElement && typeof QRCode !== 'undefined') {
+
+          new QRCode(qrElement, {
+            text: {{ gift_card.qr_identifier | json }},
+            width: 120,
+            height: 120
+          });
+
+        }
+
+
+        /* COPY GIFT CARD CODE */
+
+        const copyButton = document.getElementById('GiftCardCopy');
+
+        if (copyButton) {
+
+          copyButton.addEventListener('click', function () {
+
+            const rawCode = {{ gift_card.code | json }};
+
+            if (
+              navigator.clipboard &&
+              window.isSecureContext
+            ) {
+
+              navigator.clipboard
+                .writeText(rawCode)
+                .then(function () {
+
+                  copyButton.textContent = 'Copied';
+
+                  setTimeout(function () {
+                    copyButton.textContent = 'Copy';
+                  }, 1800);
+
+                });
+
+            }
+
+          });
+
+        }
+
+      });
+    </script>
+
+  </body>
+</html>

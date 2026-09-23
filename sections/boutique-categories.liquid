@@ -1,0 +1,372 @@
+<section
+  class="boutique-categories"
+  style="
+    --category-bg: {{ section.settings.background_color }};
+    --category-text: {{ section.settings.text_color }};
+  "
+>
+  <div class="boutique-categories__inner">
+
+    {% if section.settings.heading != blank %}
+      <div class="boutique-categories__header">
+        <h2>{{ section.settings.heading }}</h2>
+        <span></span>
+      </div>
+    {% endif %}
+
+    <div class="boutique-categories__grid">
+
+      {% for block in section.blocks %}
+
+        <a
+          href="{{ block.settings.link | default: '#' }}"
+          class="boutique-category"
+          {{ block.shopify_attributes }}
+        >
+
+          <div class="boutique-category__image">
+
+            {% if block.settings.image != blank %}
+
+              {{
+                block.settings.image
+                | image_url: width: 1200
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '400, 600, 800, 1000, 1200',
+                  sizes: '(min-width: 900px) 25vw, 50vw'
+              }}
+
+            {% else %}
+
+              {{ 'collection-1' | placeholder_svg_tag }}
+
+            {% endif %}
+
+          </div>
+
+          <div class="boutique-category__content">
+
+            <h3>
+              {{ block.settings.title }}
+            </h3>
+
+            {% if block.settings.button_text != blank %}
+              <span>
+                {{ block.settings.button_text }}
+                →
+              </span>
+            {% endif %}
+
+          </div>
+
+        </a>
+
+      {% endfor %}
+
+    </div>
+
+  </div>
+</section>
+
+
+{% stylesheet %}
+
+.boutique-categories {
+  width: 100%;
+
+  background: var(--category-bg);
+  color: var(--category-text);
+
+  padding: 55px 25px 65px;
+}
+
+.boutique-categories__inner {
+  width: min(100%, 1500px);
+
+  margin: 0 auto;
+}
+
+
+/* HEADER */
+
+.boutique-categories__header {
+  text-align: center;
+
+  margin-bottom: 32px;
+}
+
+.boutique-categories__header h2 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: clamp(27px, 2.5vw, 38px);
+
+  font-weight: 400;
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+.boutique-categories__header span {
+  width: 35px;
+  height: 1px;
+
+  display: block;
+
+  margin: 13px auto 0;
+
+  background: currentColor;
+}
+
+
+/* GRID */
+
+.boutique-categories__grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 14px;
+}
+
+
+/* CARD */
+
+.boutique-category {
+  position: relative;
+
+  min-height: 310px;
+
+  overflow: hidden;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  background: #e8e3dc;
+}
+
+.boutique-category__image {
+  position: absolute;
+
+  inset: 0;
+}
+
+.boutique-category__image img,
+.boutique-category__image svg {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  transition: transform 0.55s ease;
+}
+
+.boutique-category:hover .boutique-category__image img {
+  transform: scale(1.035);
+}
+
+
+/* LIGHT OVERLAY */
+
+.boutique-category::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,0.30),
+      rgba(0,0,0,0.02) 55%
+    );
+
+  z-index: 1;
+}
+
+
+/* TEXT */
+
+.boutique-category__content {
+  position: absolute;
+
+  left: 25px;
+  right: 25px;
+  bottom: 24px;
+
+  z-index: 2;
+
+  color: #ffffff;
+}
+
+.boutique-category__content h3 {
+  margin: 0 0 8px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 22px;
+
+  font-weight: 400;
+
+  letter-spacing: 0.05em;
+
+  text-transform: uppercase;
+}
+
+.boutique-category__content span {
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+}
+
+
+/* TABLET */
+
+@media screen and (max-width: 950px) {
+
+  .boutique-categories__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .boutique-category {
+    min-height: 360px;
+  }
+
+}
+
+
+/* MOBILE */
+
+@media screen and (max-width: 550px) {
+
+  .boutique-categories {
+    padding:
+      42px
+      15px
+      50px;
+  }
+
+  .boutique-categories__grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .boutique-category {
+    min-height: 430px;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Shop by category",
+
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "SHOP BY CATEGORY"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "category",
+
+      "name": "Category",
+
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Category name",
+          "default": "Dresses"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Link text",
+          "default": "SHOP NOW"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Collection link"
+        }
+      ]
+    }
+  ],
+
+  "max_blocks": 6,
+
+  "presets": [
+    {
+      "name": "Shop by category",
+
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "title": "Dresses"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Tops"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Co-ords"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "Accessories"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

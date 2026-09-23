@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "boutique_hero": {
+      "type": "boutique-hero",
+      "settings": {
+        "eyebrow": "THE NEW COLLECTION",
+        "heading": "Modern Styles\nTimeless You",
+        "description": "<p>Effortless fashion for every chapter of your story.</p>",
+        "button_1_text": "SHOP NEW ARRIVALS",
+        "button_2_text": "EXPLORE EDITS",
+        "image_caption": "Fashion feels better here",
+        "desktop_height": 680,
+        "background_color": "#EAE5DD",
+        "text_color": "#171717"
+      }
+    }
+  },
+  "order": [
+    "boutique_hero"
+  ]
+}

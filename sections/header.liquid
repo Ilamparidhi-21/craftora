@@ -1,0 +1,884 @@
+<div
+  class="boutique-header-wrapper{% if section.settings.sticky_header %} boutique-header--sticky{% endif %}"
+  style="
+    --header-background: {{ section.settings.background_color }};
+    --header-foreground: {{ section.settings.text_color }};
+    --announcement-background: {{ section.settings.announcement_background }};
+    --announcement-foreground: {{ section.settings.announcement_text_color }};
+  "
+>
+
+  {% if section.settings.show_announcement %}
+    <div class="boutique-announcement">
+      <div class="boutique-announcement__inner">
+
+        {% if section.settings.announcement_link != blank %}
+          <a href="{{ section.settings.announcement_link }}">
+            {{ section.settings.announcement_text }}
+          </a>
+        {% else %}
+          <span>
+            {{ section.settings.announcement_text }}
+          </span>
+        {% endif %}
+
+      </div>
+    </div>
+  {% endif %}
+
+
+  <header class="boutique-header">
+
+    <!-- MOBILE MENU -->
+    <details class="boutique-mobile-menu">
+      <summary class="boutique-icon-button" aria-label="Open menu">
+
+        <svg
+          viewBox="0 0 24 24"
+          width="23"
+          height="23"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path d="M4 7h16"></path>
+          <path d="M4 12h16"></path>
+          <path d="M4 17h16"></path>
+        </svg>
+
+      </summary>
+
+      <div class="boutique-mobile-drawer">
+
+        <nav class="boutique-mobile-navigation">
+
+          {% for link in section.settings.menu.links %}
+
+            {% if link.links != blank %}
+
+              <details class="boutique-mobile-submenu">
+
+                <summary>
+                  {{ link.title }}
+
+                  <span>+</span>
+                </summary>
+
+                <div>
+                  {% for childlink in link.links %}
+                    <a href="{{ childlink.url }}">
+                      {{ childlink.title }}
+                    </a>
+                  {% endfor %}
+                </div>
+
+              </details>
+
+            {% else %}
+
+              <a href="{{ link.url }}">
+                {{ link.title }}
+              </a>
+
+            {% endif %}
+
+          {% endfor %}
+
+        </nav>
+
+      </div>
+    </details>
+
+
+    <!-- LEFT NAVIGATION -->
+    <nav class="boutique-navigation boutique-navigation--left">
+
+      {% for link in section.settings.menu.links %}
+
+        {% if link.links != blank %}
+
+          <div class="boutique-dropdown">
+
+            <a
+              href="{{ link.url }}"
+              class="boutique-navigation__link"
+            >
+              {{ link.title }}
+
+              <svg
+                viewBox="0 0 12 8"
+                width="9"
+                height="6"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path d="M1 1.5 6 6l5-4.5"></path>
+              </svg>
+
+            </a>
+
+            <div class="boutique-dropdown__content">
+
+              {% for childlink in link.links %}
+                <a href="{{ childlink.url }}">
+                  {{ childlink.title }}
+                </a>
+              {% endfor %}
+
+            </div>
+
+          </div>
+
+        {% else %}
+
+          <a
+            href="{{ link.url }}"
+            class="boutique-navigation__link"
+          >
+            {{ link.title }}
+          </a>
+
+        {% endif %}
+
+      {% endfor %}
+
+    </nav>
+
+
+    <!-- LOGO -->
+    <div class="boutique-logo">
+
+      <a href="{{ routes.root_url }}">
+
+        {% if section.settings.logo != blank %}
+
+          <img
+            src="{{ section.settings.logo | image_url: width: 600 }}"
+            alt="{{ section.settings.logo.alt | default: shop.name | escape }}"
+            width="{{ section.settings.logo_width }}"
+            height="auto"
+            loading="eager"
+          >
+
+        {% else %}
+
+          <span class="boutique-logo__text">
+            {{ shop.name }}
+          </span>
+
+          {% if section.settings.show_tagline %}
+            <small class="boutique-logo__tagline">
+              {{ section.settings.tagline }}
+            </small>
+          {% endif %}
+
+        {% endif %}
+
+      </a>
+
+    </div>
+
+
+    <!-- RIGHT ICONS -->
+    <div class="boutique-header-icons">
+
+      {% if section.settings.show_search %}
+        <a
+          href="{{ routes.search_url }}"
+          class="boutique-icon-button"
+          aria-label="Search"
+        >
+
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <path d="m16 16 4 4"></path>
+          </svg>
+
+        </a>
+      {% endif %}
+
+
+      {% if shop.customer_accounts_enabled %}
+        <shopify-account
+          menu="{{ section.settings.customer_account_menu }}"
+          class="boutique-account"
+        >
+          {{ 'icon-account.svg' | inline_asset_content }}
+        </shopify-account>
+      {% endif %}
+
+
+      {% if section.settings.show_wishlist_icon %}
+        <a
+          href="{{ routes.root_url }}"
+          class="boutique-icon-button boutique-wishlist"
+          aria-label="Wishlist"
+        >
+
+          <svg
+            viewBox="0 0 24 24"
+            width="22"
+            height="22"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"></path>
+          </svg>
+
+        </a>
+      {% endif %}
+
+
+      <a
+        href="{{ routes.cart_url }}"
+        class="boutique-icon-button boutique-cart"
+        aria-label="Cart"
+      >
+
+        {{ 'icon-cart.svg' | inline_asset_content }}
+
+        {% if cart.item_count > 0 %}
+          <span class="boutique-cart-count">
+            {{ cart.item_count }}
+          </span>
+        {% endif %}
+
+      </a>
+
+    </div>
+
+  </header>
+
+</div>
+
+
+{% stylesheet %}
+
+/* ==========================================
+   HEADER WRAPPER
+========================================== */
+
+.boutique-header-wrapper {
+  width: 100%;
+  background: var(--header-background);
+  color: var(--header-foreground);
+  z-index: 100;
+}
+
+.boutique-header--sticky {
+  position: sticky;
+  top: 0;
+}
+
+
+/* ==========================================
+   ANNOUNCEMENT
+========================================== */
+
+.boutique-announcement {
+  background: var(--announcement-background);
+  color: var(--announcement-foreground);
+
+  min-height: 31px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boutique-announcement__inner {
+  width: 100%;
+  text-align: center;
+
+  padding: 7px 20px;
+
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+}
+
+.boutique-announcement a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* ==========================================
+   MAIN HEADER
+========================================== */
+
+.boutique-header {
+  width: min(calc(100% - 70px), 1500px);
+
+  height: 74px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr);
+
+  align-items: center;
+
+  position: relative;
+
+  background: var(--header-background);
+}
+
+
+/* ==========================================
+   LOGO
+========================================== */
+
+.boutique-logo {
+  grid-column: 2;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+.boutique-logo a {
+  color: inherit;
+
+  text-decoration: none;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.boutique-logo img {
+  display: block;
+
+  width: auto;
+  max-height: 50px;
+}
+
+.boutique-logo__text {
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 30px;
+  line-height: 1;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+.boutique-logo__tagline {
+  margin-top: 5px;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 6px;
+  line-height: 1;
+
+  letter-spacing: 0.25em;
+
+  text-transform: uppercase;
+}
+
+
+/* ==========================================
+   DESKTOP NAVIGATION
+========================================== */
+
+.boutique-navigation {
+  display: flex;
+  align-items: center;
+
+  gap: 26px;
+}
+
+.boutique-navigation--left {
+  justify-self: start;
+}
+
+.boutique-navigation__link {
+  height: 74px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 400;
+
+  white-space: nowrap;
+
+  position: relative;
+}
+
+.boutique-navigation__link::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: 20px;
+
+  width: 0;
+  height: 1px;
+
+  background: currentColor;
+
+  transition: width 0.25s ease;
+}
+
+.boutique-navigation__link:hover::after {
+  width: 100%;
+}
+
+
+/* ==========================================
+   DROPDOWN
+========================================== */
+
+.boutique-dropdown {
+  position: relative;
+}
+
+.boutique-dropdown__content {
+  position: absolute;
+
+  top: 100%;
+  left: -18px;
+
+  min-width: 205px;
+
+  padding: 14px;
+
+  background: var(--header-background);
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.08);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(8px);
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+
+  z-index: 200;
+}
+
+.boutique-dropdown:hover .boutique-dropdown__content {
+  opacity: 1;
+  visibility: visible;
+
+  transform: translateY(0);
+}
+
+.boutique-dropdown__content a {
+  display: block;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  padding: 10px 12px;
+
+  font-size: 13px;
+}
+
+.boutique-dropdown__content a:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+
+/* ==========================================
+   ICON AREA
+========================================== */
+
+.boutique-header-icons {
+  grid-column: 3;
+
+  justify-self: end;
+
+  display: flex;
+  align-items: center;
+
+  gap: 19px;
+}
+
+.boutique-icon-button {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.boutique-icon-button svg,
+.boutique-account svg {
+  width: 21px;
+  height: 21px;
+}
+
+.boutique-cart-count {
+  position: absolute;
+
+  top: -7px;
+  right: -8px;
+
+  min-width: 16px;
+  height: 16px;
+
+  padding: 0 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50px;
+
+  background: var(--header-foreground);
+  color: var(--header-background);
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+
+/* ==========================================
+   MOBILE MENU
+========================================== */
+
+.boutique-mobile-menu {
+  display: none;
+}
+
+.boutique-mobile-menu summary {
+  list-style: none;
+}
+
+.boutique-mobile-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.boutique-mobile-drawer {
+  position: absolute;
+
+  top: 100%;
+  left: -15px;
+  right: -15px;
+
+  background: var(--header-background);
+
+  padding: 20px;
+
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.08);
+
+  z-index: 300;
+}
+
+.boutique-mobile-navigation {
+  display: flex;
+  flex-direction: column;
+}
+
+.boutique-mobile-navigation > a,
+.boutique-mobile-submenu > summary {
+  color: inherit;
+
+  text-decoration: none;
+
+  padding: 14px 4px;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 18px;
+}
+
+.boutique-mobile-submenu summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  cursor: pointer;
+}
+
+.boutique-mobile-submenu div {
+  padding: 5px 0 10px 15px;
+}
+
+.boutique-mobile-submenu div a {
+  display: block;
+
+  padding: 9px 0;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 14px;
+}
+
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media screen and (max-width: 1100px) {
+
+  .boutique-header {
+    width: calc(100% - 40px);
+  }
+
+  .boutique-navigation {
+    gap: 17px;
+  }
+
+  .boutique-navigation__link {
+    font-size: 12px;
+  }
+
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media screen and (max-width: 820px) {
+
+  .boutique-header {
+    width: calc(100% - 30px);
+
+    height: 65px;
+
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .boutique-navigation {
+    display: none;
+  }
+
+  .boutique-mobile-menu {
+    display: block;
+
+    grid-column: 1;
+
+    justify-self: start;
+  }
+
+  .boutique-logo {
+    grid-column: 2;
+  }
+
+  .boutique-logo__text {
+    font-size: 24px;
+  }
+
+  .boutique-header-icons {
+    grid-column: 3;
+
+    gap: 13px;
+  }
+
+  .boutique-wishlist,
+  .boutique-account {
+    display: none;
+  }
+
+}
+
+
+/* ==========================================
+   SMALL MOBILE
+========================================== */
+
+@media screen and (max-width: 480px) {
+
+  .boutique-announcement__inner {
+    font-size: 8px;
+
+    letter-spacing: 0.13em;
+
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .boutique-logo__text {
+    font-size: 21px;
+
+    letter-spacing: 0.16em;
+  }
+
+  .boutique-logo__tagline {
+    display: none;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Boutique header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Announcement bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement",
+      "default": "COMPLIMENTARY SHIPPING ON ORDERS OVER ₹1,999"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "Announcement link"
+    },
+    {
+      "type": "color",
+      "id": "announcement_background",
+      "label": "Background",
+      "default": "#292929"
+    },
+    {
+      "type": "color",
+      "id": "announcement_text_color",
+      "label": "Text",
+      "default": "#FFFFFF"
+    },
+
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width",
+      "min": 80,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 150
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tagline",
+      "label": "Show tagline",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "WEAR YOUR STORY"
+    },
+
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu"
+    },
+    {
+      "type": "link_list",
+      "id": "customer_account_menu",
+      "label": "Customer account menu",
+      "default": "customer-account-main-menu"
+    },
+
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist_icon",
+      "label": "Show wishlist icon",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Sticky header",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Header background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Header text",
+      "default": "#151515"
+    }
+  ]
+}
+{% endschema %}

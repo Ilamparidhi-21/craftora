@@ -1,0 +1,1214 @@
+{% comment %}
+  Boutique search page
+{% endcomment %}
+
+<section
+  class="boutique-search"
+  style="
+    --search-bg: {{ section.settings.background_color }};
+    --search-text: {{ section.settings.text_color }};
+    --search-border: {{ section.settings.border_color }};
+  "
+>
+
+  <div class="boutique-search__inner">
+
+    <!-- HEADER -->
+
+    <div class="boutique-search__header">
+
+      <p class="boutique-search__eyebrow">
+        DISCOVER
+      </p>
+
+      <h1>
+        {{ section.settings.heading }}
+      </h1>
+
+      {% if section.settings.description != blank %}
+        <p class="boutique-search__description">
+          {{ section.settings.description }}
+        </p>
+      {% endif %}
+
+    </div>
+
+
+    <!-- SEARCH FORM -->
+
+    <form
+      action="{{ routes.search_url }}"
+      method="get"
+      role="search"
+      class="boutique-search__form"
+    >
+
+      <div class="boutique-search__field">
+
+        <input
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ section.settings.placeholder }}"
+          aria-label="Search"
+          autocomplete="off"
+        >
+
+        <button
+          type="submit"
+          aria-label="Submit search"
+        >
+
+          <span>
+            SEARCH
+          </span>
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <path d="m16 16 4 4"></path>
+          </svg>
+
+        </button>
+
+      </div>
+
+    </form>
+
+
+    {% if search.performed %}
+
+      <!-- RESULT INFO -->
+
+      <div class="boutique-search__result-info">
+
+        {% if search.results_count > 0 %}
+
+          <p>
+            {{ search.results_count }}
+
+            {% if search.results_count == 1 %}
+              RESULT
+            {% else %}
+              RESULTS
+            {% endif %}
+
+            FOR
+            <strong>
+              “{{ search.terms }}”
+            </strong>
+          </p>
+
+        {% endif %}
+
+      </div>
+
+
+      {% if search.results_count == 0 %}
+
+        <!-- NO RESULTS -->
+
+        <div class="boutique-search-empty">
+
+          <h2>
+            Nothing found
+          </h2>
+
+          <p>
+            We couldn't find anything matching
+            “{{ search.terms }}”.
+          </p>
+
+          <a href="{{ routes.all_products_collection_url }}">
+            EXPLORE ALL PRODUCTS
+          </a>
+
+        </div>
+
+      {% else %}
+
+        {% paginate search.results by section.settings.results_per_page %}
+
+          <div class="boutique-search__grid">
+
+            {% for result in search.results %}
+
+              {% case result.object_type %}
+
+                {% when 'product' %}
+
+                  <!-- PRODUCT RESULT -->
+
+                  <article class="boutique-search-card boutique-search-card--product">
+
+                    <a
+                      href="{{ result.url }}"
+                      class="boutique-search-card__media"
+                    >
+
+                      {% if result.featured_image != blank %}
+
+                        {{
+                          result.featured_image
+                          | image_url: width: 1100
+                          | image_tag:
+                            loading: 'lazy',
+                            widths: '300, 500, 700, 900, 1100',
+                            sizes: '(min-width: 990px) 25vw, 50vw'
+                        }}
+
+                      {% else %}
+
+                        {{ 'product-1' | placeholder_svg_tag }}
+
+                      {% endif %}
+
+
+                      {% if result.available == false %}
+
+                        <span class="boutique-search-card__badge">
+                          SOLD OUT
+                        </span>
+
+                      {% elsif result.compare_at_price > result.price %}
+
+                        <span class="boutique-search-card__badge">
+                          SALE
+                        </span>
+
+                      {% endif %}
+
+                    </a>
+
+
+                    <div class="boutique-search-card__content">
+
+                      {% if section.settings.show_result_type %}
+                        <span class="boutique-search-card__type">
+                          PRODUCT
+                        </span>
+                      {% endif %}
+
+
+                      <div class="boutique-search-card__title-row">
+
+                        <a href="{{ result.url }}">
+                          {{ result.title }}
+                        </a>
+
+                        <span aria-hidden="true">
+                          ♡
+                        </span>
+
+                      </div>
+
+
+                      <div class="boutique-search-card__price">
+
+                        {% if result.price_varies %}
+
+                          <span>
+                            From {{ result.price_min | money }}
+                          </span>
+
+                        {% elsif result.compare_at_price > result.price %}
+
+                          <span class="boutique-search-card__sale">
+                            {{ result.price | money }}
+                          </span>
+
+                          <s>
+                            {{ result.compare_at_price | money }}
+                          </s>
+
+                        {% else %}
+
+                          <span>
+                            {{ result.price | money }}
+                          </span>
+
+                        {% endif %}
+
+                      </div>
+
+                    </div>
+
+                  </article>
+
+
+                {% when 'article' %}
+
+                  <!-- ARTICLE RESULT -->
+
+                  {% assign article_image = result.image %}
+
+                  <article class="boutique-search-card boutique-search-card--content">
+
+                    <a
+                      href="{{ result.url }}"
+                      class="boutique-search-card__media"
+                    >
+
+                      {% if article_image != blank %}
+
+                        {{
+                          article_image
+                          | image_url: width: 1100
+                          | image_tag:
+                            loading: 'lazy',
+                            widths: '300, 500, 700, 900, 1100',
+                            sizes: '(min-width: 990px) 25vw, 50vw'
+                        }}
+
+                      {% else %}
+
+                        {{ 'lifestyle-1' | placeholder_svg_tag }}
+
+                      {% endif %}
+
+                    </a>
+
+
+                    <div class="boutique-search-card__content">
+
+                      {% if section.settings.show_result_type %}
+                        <span class="boutique-search-card__type">
+                          JOURNAL
+                        </span>
+                      {% endif %}
+
+                      <a
+                        href="{{ result.url }}"
+                        class="boutique-search-card__content-title"
+                      >
+                        {{ result.title }}
+                      </a>
+
+                      {% if result.excerpt_or_content != blank %}
+
+                        <p>
+                          {{
+                            result.excerpt_or_content
+                            | strip_html
+                            | truncatewords: 20
+                          }}
+                        </p>
+
+                      {% endif %}
+
+                      <a
+                        href="{{ result.url }}"
+                        class="boutique-search-card__read"
+                      >
+                        READ MORE →
+                      </a>
+
+                    </div>
+
+                  </article>
+
+
+                {% when 'page' %}
+
+                  <!-- PAGE RESULT -->
+
+                  <article class="boutique-search-card boutique-search-card--page">
+
+                    <div class="boutique-search-page-result">
+
+                      {% if section.settings.show_result_type %}
+                        <span class="boutique-search-card__type">
+                          PAGE
+                        </span>
+                      {% endif %}
+
+                      <h2>
+                        <a href="{{ result.url }}">
+                          {{ result.title }}
+                        </a>
+                      </h2>
+
+                      {% if result.content != blank %}
+
+                        <p>
+                          {{
+                            result.content
+                            | strip_html
+                            | truncatewords: 28
+                          }}
+                        </p>
+
+                      {% endif %}
+
+                      <a
+                        href="{{ result.url }}"
+                        class="boutique-search-card__read"
+                      >
+                        VIEW PAGE →
+                      </a>
+
+                    </div>
+
+                  </article>
+
+              {% endcase %}
+
+            {% endfor %}
+
+          </div>
+
+
+          <!-- PAGINATION -->
+
+          {% if paginate.pages > 1 %}
+
+            <nav
+              class="boutique-search-pagination"
+              aria-label="Search pagination"
+            >
+
+              <div>
+
+                {% if paginate.previous %}
+                  <a href="{{ paginate.previous.url }}">
+                    ← PREVIOUS
+                  </a>
+                {% endif %}
+
+              </div>
+
+
+              <div class="boutique-search-pagination__numbers">
+
+                {% for part in paginate.parts %}
+
+                  {% if part.is_link %}
+
+                    <a href="{{ part.url }}">
+                      {{ part.title }}
+                    </a>
+
+                  {% else %}
+
+                    <span
+                      {% if part.title == paginate.current_page %}
+                        class="active"
+                      {% endif %}
+                    >
+                      {{ part.title }}
+                    </span>
+
+                  {% endif %}
+
+                {% endfor %}
+
+              </div>
+
+
+              <div class="boutique-search-pagination__next">
+
+                {% if paginate.next %}
+                  <a href="{{ paginate.next.url }}">
+                    NEXT →
+                  </a>
+                {% endif %}
+
+              </div>
+
+            </nav>
+
+          {% endif %}
+
+        {% endpaginate %}
+
+      {% endif %}
+
+    {% else %}
+
+      <!-- INITIAL SEARCH STATE -->
+
+      <div class="boutique-search-start">
+
+        <p>
+          Search for dresses, tops, collections and more.
+        </p>
+
+      </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+
+{% stylesheet %}
+
+/* ===================================
+   SEARCH PAGE
+=================================== */
+
+.boutique-search {
+  width: 100%;
+
+  min-height: 65vh;
+
+  padding:
+    65px
+    25px
+    95px;
+
+  box-sizing: border-box;
+
+  background: var(--search-bg);
+  color: var(--search-text);
+}
+
+.boutique-search__inner {
+  width: min(100%, 1450px);
+
+  margin: 0 auto;
+}
+
+
+/* ===================================
+   HEADER
+=================================== */
+
+.boutique-search__header {
+  max-width: 750px;
+
+  margin: 0 auto;
+
+  text-align: center;
+}
+
+.boutique-search__eyebrow {
+  margin:
+    0
+    0
+    15px;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.2em;
+
+  text-transform: uppercase;
+}
+
+.boutique-search__header h1 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(46px, 6vw, 78px);
+
+  font-weight: 400;
+
+  line-height: 1;
+}
+
+.boutique-search__description {
+  max-width: 520px;
+
+  margin:
+    20px
+    auto
+    0;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+
+  opacity: 0.62;
+}
+
+
+/* ===================================
+   SEARCH FIELD
+=================================== */
+
+.boutique-search__form {
+  width: min(100%, 850px);
+
+  margin:
+    45px
+    auto
+    0;
+}
+
+.boutique-search__field {
+  display: flex;
+
+  align-items: stretch;
+
+  border-bottom:
+    1px solid var(--search-text);
+}
+
+.boutique-search__field input {
+  flex: 1;
+
+  min-width: 0;
+
+  padding:
+    17px
+    5px;
+
+  border: 0;
+
+  outline: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 20px;
+}
+
+.boutique-search__field input::placeholder {
+  color: inherit;
+
+  opacity: 0.4;
+}
+
+.boutique-search__field button {
+  padding:
+    0
+    5px
+    0
+    25px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: inherit;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+}
+
+.boutique-search__field button svg {
+  width: 20px;
+  height: 20px;
+}
+
+
+/* ===================================
+   RESULT INFO
+=================================== */
+
+.boutique-search__result-info {
+  margin:
+    55px
+    0
+    25px;
+
+  padding-bottom: 14px;
+
+  border-bottom:
+    1px solid var(--search-border);
+}
+
+.boutique-search__result-info p {
+  margin: 0;
+
+  font-size: 9px;
+
+  letter-spacing: 0.12em;
+
+  opacity: 0.62;
+}
+
+.boutique-search__result-info strong {
+  font-weight: 600;
+
+  color: var(--search-text);
+}
+
+
+/* ===================================
+   GRID
+=================================== */
+
+.boutique-search__grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap:
+    48px
+    17px;
+}
+
+
+/* ===================================
+   CARD IMAGE
+=================================== */
+
+.boutique-search-card__media {
+  position: relative;
+
+  display: block;
+
+  aspect-ratio: 3 / 4;
+
+  overflow: hidden;
+
+  background: #eeeae4;
+}
+
+.boutique-search-card__media img,
+.boutique-search-card__media svg {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition:
+    transform
+    0.5s
+    ease;
+}
+
+.boutique-search-card:hover
+.boutique-search-card__media img {
+  transform: scale(1.025);
+}
+
+
+/* BADGE */
+
+.boutique-search-card__badge {
+  position: absolute;
+
+  top: 12px;
+  left: 12px;
+
+  padding:
+    6px
+    9px;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
+}
+
+
+/* ===================================
+   CARD CONTENT
+=================================== */
+
+.boutique-search-card__content {
+  padding-top: 13px;
+}
+
+.boutique-search-card__type {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-size: 8px;
+
+  letter-spacing: 0.15em;
+
+  opacity: 0.45;
+}
+
+.boutique-search-card__title-row {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.boutique-search-card__title-row a,
+.boutique-search-card__content-title {
+  color: inherit;
+
+  text-decoration: none;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 15px;
+
+  line-height: 1.4;
+}
+
+.boutique-search-card__title-row span {
+  font-size: 18px;
+}
+
+
+/* PRICE */
+
+.boutique-search-card__price {
+  margin-top: 7px;
+
+  display: flex;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+  font-size: 12px;
+}
+
+.boutique-search-card__sale {
+  color: #9b3a32;
+}
+
+.boutique-search-card__price s {
+  opacity: 0.45;
+}
+
+
+/* ARTICLE */
+
+.boutique-search-card__content > p {
+  margin:
+    10px
+    0
+    0;
+
+  font-size: 12px;
+
+  line-height: 1.65;
+
+  opacity: 0.6;
+}
+
+.boutique-search-card__read {
+  display: inline-block;
+
+  margin-top: 15px;
+
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+
+  border-bottom:
+    1px solid currentColor;
+
+  padding-bottom: 3px;
+}
+
+
+/* ===================================
+   PAGE RESULTS
+=================================== */
+
+.boutique-search-card--page {
+  min-height: 310px;
+
+  border:
+    1px solid var(--search-border);
+
+  display: flex;
+}
+
+.boutique-search-page-result {
+  padding:
+    35px
+    28px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+}
+
+.boutique-search-page-result h2 {
+  margin:
+    5px
+    0
+    0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 27px;
+
+  font-weight: 400;
+}
+
+.boutique-search-page-result h2 a {
+  color: inherit;
+
+  text-decoration: none;
+}
+
+.boutique-search-page-result p {
+  margin:
+    15px
+    0
+    0;
+
+  font-size: 12px;
+
+  line-height: 1.7;
+
+  opacity: 0.6;
+}
+
+
+/* ===================================
+   EMPTY RESULTS
+=================================== */
+
+.boutique-search-empty,
+.boutique-search-start {
+  max-width: 650px;
+
+  margin:
+    75px
+    auto
+    20px;
+
+  text-align: center;
+}
+
+.boutique-search-empty h2 {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 44px;
+
+  font-weight: 400;
+}
+
+.boutique-search-empty p,
+.boutique-search-start p {
+  margin:
+    18px
+    0
+    0;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+
+  opacity: 0.6;
+}
+
+.boutique-search-empty a {
+  min-height: 48px;
+
+  margin-top: 28px;
+
+  padding:
+    0
+    25px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: var(--search-text);
+
+  border:
+    1px solid var(--search-text);
+
+  color: var(--search-bg);
+
+  text-decoration: none;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+}
+
+
+/* ===================================
+   PAGINATION
+=================================== */
+
+.boutique-search-pagination {
+  margin-top: 70px;
+
+  padding-top: 28px;
+
+  border-top:
+    1px solid var(--search-border);
+
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto
+    1fr;
+
+  align-items: center;
+}
+
+.boutique-search-pagination a {
+  color: inherit;
+
+  text-decoration: none;
+
+  font-size: 9px;
+
+  letter-spacing: 0.13em;
+}
+
+.boutique-search-pagination__numbers {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 15px;
+}
+
+.boutique-search-pagination__numbers a,
+.boutique-search-pagination__numbers span {
+  font-size: 11px;
+
+  opacity: 0.45;
+}
+
+.boutique-search-pagination__numbers .active {
+  opacity: 1;
+
+  border-bottom:
+    1px solid currentColor;
+}
+
+.boutique-search-pagination__next {
+  text-align: right;
+}
+
+
+/* ===================================
+   TABLET
+=================================== */
+
+@media screen and (max-width: 950px) {
+
+  .boutique-search__grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+}
+
+
+/* ===================================
+   MOBILE
+=================================== */
+
+@media screen and (max-width: 650px) {
+
+  .boutique-search {
+    padding:
+      45px
+      10px
+      65px;
+  }
+
+  .boutique-search__header {
+    padding:
+      0
+      10px;
+  }
+
+  .boutique-search__header h1 {
+    font-size: 45px;
+  }
+
+  .boutique-search__form {
+    width: calc(100% - 20px);
+
+    margin-top: 35px;
+  }
+
+  .boutique-search__field input {
+    font-size: 17px;
+  }
+
+  .boutique-search__field button span {
+    display: none;
+  }
+
+  .boutique-search__result-info {
+    margin:
+      45px
+      10px
+      20px;
+  }
+
+  .boutique-search__grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap:
+      35px
+      10px;
+  }
+
+  .boutique-search-card__title-row a,
+  .boutique-search-card__content-title {
+    font-size: 13px;
+  }
+
+  .boutique-search-pagination {
+    margin:
+      55px
+      10px
+      0;
+
+    gap: 5px;
+  }
+
+  .boutique-search-pagination__numbers {
+    gap: 8px;
+  }
+
+}
+
+
+/* ===================================
+   VERY SMALL MOBILE
+=================================== */
+
+@media screen and (max-width: 390px) {
+
+  .boutique-search-card__title-row span {
+    display: none;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Boutique search",
+
+  "settings": [
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Find Your Next Favourite"
+    },
+
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Search our latest pieces, collections and boutique stories."
+    },
+
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Search placeholder",
+      "default": "What are you looking for?"
+    },
+
+    {
+      "type": "range",
+      "id": "results_per_page",
+      "label": "Results per page",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "default": 20
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_result_type",
+      "label": "Show result type",
+      "default": true
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borders",
+      "default": "#DEDAD4"
+    }
+
+  ]
+}
+{% endschema %}

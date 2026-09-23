@@ -1,0 +1,545 @@
+{% comment %}
+  Boutique 404 page
+{% endcomment %}
+
+<section
+  class="boutique-404"
+  style="
+    --404-bg: {{ section.settings.background_color }};
+    --404-text: {{ section.settings.text_color }};
+    --404-button-bg: {{ section.settings.button_background }};
+    --404-button-text: {{ section.settings.button_text_color }};
+  "
+>
+
+  <div class="boutique-404__inner">
+
+    <div class="boutique-404__content">
+
+      {% if section.settings.eyebrow != blank %}
+        <p class="boutique-404__eyebrow">
+          {{ section.settings.eyebrow }}
+        </p>
+      {% endif %}
+
+
+      <div class="boutique-404__number">
+        404
+      </div>
+
+
+      {% if section.settings.heading != blank %}
+        <h1>
+          {{ section.settings.heading }}
+        </h1>
+      {% endif %}
+
+
+      {% if section.settings.text != blank %}
+
+        <div class="boutique-404__text">
+          {{ section.settings.text }}
+        </div>
+
+      {% endif %}
+
+
+      <div class="boutique-404__buttons">
+
+        {% if section.settings.primary_button_text != blank %}
+
+          <a
+            href="{{ section.settings.primary_button_link | default: routes.root_url }}"
+            class="boutique-404__button boutique-404__button--primary"
+          >
+            {{ section.settings.primary_button_text }}
+          </a>
+
+        {% endif %}
+
+
+        {% if section.settings.secondary_button_text != blank %}
+
+          <a
+            href="{{ section.settings.secondary_button_link | default: routes.all_products_collection_url }}"
+            class="boutique-404__button boutique-404__button--secondary"
+          >
+            {{ section.settings.secondary_button_text }}
+          </a>
+
+        {% endif %}
+
+      </div>
+
+    </div>
+
+
+    {% if section.settings.image != blank %}
+
+      <div class="boutique-404__media">
+
+        {{
+          section.settings.image
+          | image_url: width: 1800
+          | image_tag:
+            loading: 'eager',
+            widths: '600, 900, 1200, 1500, 1800',
+            sizes: '(min-width: 768px) 50vw, 100vw',
+            class: 'boutique-404__image'
+        }}
+
+      </div>
+
+    {% else %}
+
+      <div class="boutique-404__media boutique-404__media--placeholder">
+
+        {{ 'lifestyle-1' | placeholder_svg_tag }}
+
+      </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
+
+{% stylesheet %}
+
+/* ====================================
+   404 PAGE
+==================================== */
+
+.boutique-404 {
+  width: 100%;
+
+  min-height: 70vh;
+
+  background: var(--404-bg);
+  color: var(--404-text);
+}
+
+
+/* ====================================
+   LAYOUT
+==================================== */
+
+.boutique-404__inner {
+  min-height: 70vh;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 48%)
+    minmax(0, 52%);
+}
+
+
+/* ====================================
+   CONTENT
+==================================== */
+
+.boutique-404__content {
+  padding:
+    clamp(60px, 8vw, 120px)
+    clamp(35px, 7vw, 110px);
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: flex-start;
+}
+
+
+/* EYEBROW */
+
+.boutique-404__eyebrow {
+  margin:
+    0
+    0
+    18px;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+}
+
+
+/* 404 NUMBER */
+
+.boutique-404__number {
+  margin-bottom: 5px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(90px, 11vw, 170px);
+
+  line-height: 0.85;
+
+  font-weight: 400;
+
+  opacity: 0.12;
+}
+
+
+/* HEADING */
+
+.boutique-404 h1 {
+  max-width: 550px;
+
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(46px, 5vw, 72px);
+
+  line-height: 1;
+
+  font-weight: 400;
+
+  letter-spacing: -0.02em;
+}
+
+
+/* TEXT */
+
+.boutique-404__text {
+  max-width: 500px;
+
+  margin-top: 23px;
+
+  font-size: 14px;
+
+  line-height: 1.75;
+
+  opacity: 0.68;
+}
+
+.boutique-404__text p {
+  margin: 0;
+}
+
+
+/* ====================================
+   BUTTONS
+==================================== */
+
+.boutique-404__buttons {
+  margin-top: 32px;
+
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+
+.boutique-404__button {
+  min-height: 48px;
+
+  padding:
+    0
+    25px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-decoration: none;
+
+  font-size: 9px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+/* PRIMARY */
+
+.boutique-404__button--primary {
+  background: var(--404-button-bg);
+
+  color: var(--404-button-text);
+
+  border:
+    1px solid var(--404-button-bg);
+}
+
+.boutique-404__button--primary:hover {
+  background: transparent;
+
+  color: var(--404-text);
+}
+
+
+/* SECONDARY */
+
+.boutique-404__button--secondary {
+  background: transparent;
+
+  color: var(--404-text);
+
+  border:
+    1px solid currentColor;
+}
+
+.boutique-404__button--secondary:hover {
+  background: var(--404-text);
+
+  color: var(--404-bg);
+}
+
+
+/* ====================================
+   IMAGE
+==================================== */
+
+.boutique-404__media {
+  position: relative;
+
+  min-height: 70vh;
+
+  overflow: hidden;
+
+  background: #e8e3dc;
+}
+
+.boutique-404__image,
+.boutique-404__media svg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+/* ====================================
+   TABLET
+==================================== */
+
+@media screen and (max-width: 900px) {
+
+  .boutique-404__inner {
+    grid-template-columns:
+      52%
+      48%;
+  }
+
+  .boutique-404__content {
+    padding:
+      60px
+      40px;
+  }
+
+}
+
+
+/* ====================================
+   MOBILE
+==================================== */
+
+@media screen and (max-width: 767px) {
+
+  .boutique-404__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .boutique-404__media {
+    order: 1;
+
+    min-height: 440px;
+  }
+
+  .boutique-404__content {
+    order: 2;
+
+    padding:
+      45px
+      22px
+      60px;
+  }
+
+  .boutique-404__number {
+    font-size: 90px;
+  }
+
+  .boutique-404 h1 {
+    font-size: 45px;
+  }
+
+}
+
+
+/* ====================================
+   SMALL MOBILE
+==================================== */
+
+@media screen and (max-width: 450px) {
+
+  .boutique-404__media {
+    min-height: 360px;
+  }
+
+  .boutique-404__buttons {
+    width: 100%;
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .boutique-404__button {
+    width: 100%;
+
+    box-sizing: border-box;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Boutique 404",
+
+  "settings": [
+
+    {
+      "type": "header",
+      "content": "Content"
+    },
+
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "PAGE NOT FOUND"
+    },
+
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Lost in the Edit"
+    },
+
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>The page you're looking for has wandered out of season. Discover something new instead.</p>"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+
+    {
+      "type": "text",
+      "id": "primary_button_text",
+      "label": "Primary button text",
+      "default": "RETURN HOME"
+    },
+
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Primary button link"
+    },
+
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "Secondary button text",
+      "default": "SHOP NOW"
+    },
+
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary button link"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Image"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "404 image"
+    },
+
+
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#E9E3DB"
+    },
+
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Primary button",
+      "default": "#171717"
+    },
+
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Primary button text",
+      "default": "#FFFFFF"
+    }
+
+  ]
+}
+{% endschema %}
