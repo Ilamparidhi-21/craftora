@@ -1,152 +1,125 @@
-{% assign related_collection = product.collections.first %}
-{% assign products_shown = 0 %}
-
 <section
+  id="BoutiqueRecommendations-{{ section.id }}"
   class="boutique-related"
+  data-product-recommendations
+  data-recommendations-loaded="{% if recommendations.performed? %}true{% else %}false{% endif %}"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent=related"
   style="
     --related-bg: {{ section.settings.background_color }};
     --related-text: {{ section.settings.text_color }};
   "
+  {% unless recommendations.performed? %}
+    hidden
+  {% endunless %}
 >
-  <div class="boutique-related__inner">
 
-    <div class="boutique-related__heading">
+  {% if recommendations.performed? and recommendations.products_count > 0 %}
 
-      {% if section.settings.eyebrow != blank %}
-        <p>{{ section.settings.eyebrow }}</p>
-      {% endif %}
+    <div class="boutique-related__inner">
 
-      <h2>{{ section.settings.heading }}</h2>
+      <div class="boutique-related__heading">
 
-    </div>
+        {% if section.settings.eyebrow != blank %}
+          <p>
+            {{ section.settings.eyebrow }}
+          </p>
+        {% endif %}
 
+        {% if section.settings.heading != blank %}
+          <h2>
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
 
-    <div class="boutique-related__grid">
-
-      {% if related_collection != blank %}
-
-        {% for related_product in related_collection.products %}
-
-          {% if related_product.id != product.id %}
-
-            <article class="boutique-related-card">
-
-              <a
-                href="{{ related_product.url }}"
-                class="boutique-related-card__image"
-              >
-
-                {% if related_product.featured_image != blank %}
-
-                  {{
-                    related_product.featured_image
-                    | image_url: width: 1000
-                    | image_tag:
-                      loading: 'lazy',
-                      widths: '300, 500, 700, 1000',
-                      sizes: '(min-width: 900px) 25vw, 50vw'
-                  }}
-
-                {% else %}
-
-                  {{ 'product-1' | placeholder_svg_tag }}
-
-                {% endif %}
+      </div>
 
 
-                {% if related_product.available == false %}
+      <div class="boutique-related__grid">
 
-                  <span class="boutique-related-card__badge">
-                    SOLD OUT
-                  </span>
-
-                {% elsif related_product.compare_at_price > related_product.price %}
-
-                  <span class="boutique-related-card__badge">
-                    SALE
-                  </span>
-
-                {% endif %}
-
-              </a>
-
-
-              <div class="boutique-related-card__info">
-
-                <div class="boutique-related-card__title">
-
-                  <a href="{{ related_product.url }}">
-                    {{ related_product.title }}
-                  </a>
-
-                  <span aria-hidden="true">
-                    ♡
-                  </span>
-
-                </div>
-
-
-                <div class="boutique-related-card__price">
-
-                  {% if related_product.price_varies %}
-
-                    From {{ related_product.price_min | money }}
-
-                  {% elsif related_product.compare_at_price > related_product.price %}
-
-                    <span class="boutique-related-card__sale">
-                      {{ related_product.price | money }}
-                    </span>
-
-                    <s>
-                      {{ related_product.compare_at_price | money }}
-                    </s>
-
-                  {% else %}
-
-                    {{ related_product.price | money }}
-
-                  {% endif %}
-
-                </div>
-
-              </div>
-
-            </article>
-
-
-            {% assign products_shown = products_shown | plus: 1 %}
-
-            {% if products_shown >= section.settings.products_to_show %}
-              {% break %}
-            {% endif %}
-
-          {% endif %}
-
-        {% endfor %}
-
-      {% endif %}
-
-
-      {% if products_shown == 0 %}
-
-        {% for i in (1..4) %}
+        {% for related_product in recommendations.products %}
 
           <article class="boutique-related-card">
 
-            <div class="boutique-related-card__image">
-              {{ 'product-1' | placeholder_svg_tag }}
-            </div>
+            <a
+              href="{{ related_product.url }}"
+              class="boutique-related-card__image"
+            >
+
+              {% if related_product.featured_image != blank %}
+
+                {% assign related_image_alt = related_product.featured_image.alt | default: related_product.title %}
+
+                {{
+                  related_product.featured_image
+                  | image_url: width: 1000
+                  | image_tag:
+                    loading: 'lazy',
+                    widths: '300, 500, 700, 1000',
+                    sizes: '(min-width: 900px) 25vw, 50vw',
+                    alt: related_image_alt
+                }}
+
+              {% else %}
+
+                {{ 'product-1' | placeholder_svg_tag }}
+
+              {% endif %}
+
+
+              {% unless related_product.available %}
+
+                <span class="boutique-related-card__badge">
+                  SOLD OUT
+                </span>
+
+              {% elsif related_product.compare_at_price > related_product.price %}
+
+                <span class="boutique-related-card__badge">
+                  SALE
+                </span>
+
+              {% endunless %}
+
+            </a>
+
 
             <div class="boutique-related-card__info">
 
               <div class="boutique-related-card__title">
-                <span>Example product</span>
-                <span>♡</span>
+
+                <a href="{{ related_product.url }}">
+                  {{ related_product.title }}
+                </a>
+
+                <span aria-hidden="true">
+                  ♡
+                </span>
+
               </div>
 
+
               <div class="boutique-related-card__price">
-                {{ 199900 | money }}
+
+                {% if related_product.price_varies %}
+
+                  From {{ related_product.price_min | money }}
+
+                {% elsif related_product.compare_at_price > related_product.price %}
+
+                  <span class="boutique-related-card__sale">
+                    {{ related_product.price | money }}
+                  </span>
+
+                  <s>
+                    {{ related_product.compare_at_price | money }}
+                  </s>
+
+                {% else %}
+
+                  {{ related_product.price | money }}
+
+                {% endif %}
+
               </div>
 
             </div>
@@ -155,24 +128,25 @@
 
         {% endfor %}
 
+      </div>
+
+
+      {% if section.settings.show_view_all %}
+
+        <div class="boutique-related__view-all">
+
+          <a href="{{ routes.all_products_collection_url }}">
+            SHOP ALL →
+          </a>
+
+        </div>
+
       {% endif %}
 
     </div>
 
+  {% endif %}
 
-    {% if related_collection != blank and section.settings.show_view_all %}
-
-      <div class="boutique-related__view-all">
-
-        <a href="{{ related_collection.url }}">
-          VIEW COLLECTION →
-        </a>
-
-      </div>
-
-    {% endif %}
-
-  </div>
 </section>
 
 
@@ -405,6 +379,207 @@
 {% endstylesheet %}
 
 
+
+<script>
+(function () {
+
+  function initBoutiqueRecommendations(root) {
+
+    const selector =
+      '#BoutiqueRecommendations-{{ section.id }}';
+
+    let sectionElement = null;
+
+
+    if (
+      root &&
+      root.matches &&
+      root.matches(selector)
+    ) {
+
+      sectionElement = root;
+
+    } else if (
+      root &&
+      root.querySelector
+    ) {
+
+      sectionElement =
+        root.querySelector(selector);
+
+    }
+
+
+    if (!sectionElement) return;
+
+
+    if (
+      sectionElement.dataset.recommendationsLoaded ===
+      'true'
+    ) {
+      return;
+    }
+
+
+    if (
+      sectionElement.dataset.boutiqueRecommendationsInitialized ===
+      'true'
+    ) {
+      return;
+    }
+
+
+    sectionElement.dataset.boutiqueRecommendationsInitialized =
+      'true';
+
+
+    const url =
+      sectionElement.dataset.url;
+
+
+    if (!url) {
+      sectionElement.remove();
+      return;
+    }
+
+
+    fetch(url)
+      .then(function (response) {
+
+        if (!response.ok) {
+          throw new Error(
+            'Unable to load product recommendations'
+          );
+        }
+
+        return response.text();
+
+      })
+      .then(function (htmlText) {
+
+        const container =
+          document.createElement('div');
+
+        container.innerHTML =
+          htmlText;
+
+
+        const recommendationsSection =
+          container.querySelector(selector);
+
+
+        if (
+          !recommendationsSection ||
+          recommendationsSection.dataset.recommendationsLoaded !==
+            'true'
+        ) {
+
+          sectionElement.remove();
+
+          return;
+
+        }
+
+
+        const productCards =
+          recommendationsSection.querySelectorAll(
+            '.boutique-related-card'
+          );
+
+
+        if (!productCards.length) {
+
+          sectionElement.remove();
+
+          return;
+
+        }
+
+
+        sectionElement.replaceWith(
+          recommendationsSection
+        );
+
+      })
+      .catch(function () {
+
+        /*
+         * Recommendation failure shouldn't prevent
+         * the rest of the product page from working.
+         */
+
+        sectionElement.remove();
+
+      });
+
+  }
+
+
+  function bootBoutiqueRecommendations(root) {
+
+    initBoutiqueRecommendations(
+      root || document
+    );
+
+  }
+
+
+  if (document.readyState === 'loading') {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      function () {
+
+        bootBoutiqueRecommendations(
+          document
+        );
+
+      },
+      { once: true }
+    );
+
+  } else {
+
+    bootBoutiqueRecommendations(
+      document
+    );
+
+  }
+
+
+  const handlerKey =
+    'BoutiqueRecommendationsSectionLoad-{{ section.id }}';
+
+
+  if (window[handlerKey]) {
+
+    document.removeEventListener(
+      'shopify:section:load',
+      window[handlerKey]
+    );
+
+  }
+
+
+  window[handlerKey] =
+    function (event) {
+
+      bootBoutiqueRecommendations(
+        event.target
+      );
+
+    };
+
+
+  document.addEventListener(
+    'shopify:section:load',
+    window[handlerKey]
+  );
+
+})();
+</script>
+
+
 {% schema %}
 {
   "name": "Related products",
@@ -438,7 +613,7 @@
     {
       "type": "checkbox",
       "id": "show_view_all",
-      "label": "Show view collection link",
+      "label": "Show shop all link",
       "default": true
     },
 
