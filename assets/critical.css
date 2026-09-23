@@ -73,7 +73,7 @@ p:empty {
 
 /** Theme styles below */
 body {
-  font-family: var(--font-primary--family);
+  font-family: var(--font-body-family);
   background-color: var(--color-background);
   color: var(--color-foreground);
 }
@@ -114,4 +114,76 @@ body {
 /* Child elements that use the full-width utility class span the entire viewport. */
 .shopify-section > .full-width {
   grid-column: 1 / -1;
+}
+
+
+/* Accessibility foundation */
+
+.skip-to-content {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+
+  z-index: 10000;
+
+  padding: 0.75rem 1rem;
+
+  background: var(--color-foreground);
+  color: var(--color-background);
+
+  text-decoration: none;
+
+  transform: translateY(-200%);
+
+  transition: transform 0.2s ease;
+}
+
+.skip-to-content:focus {
+  transform: translateY(0);
+}
+
+
+/* Keyboard focus */
+
+:where(
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex]
+):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+
+/* Main content receives focus from skip navigation */
+
+#MainContent:focus {
+  outline: none;
+}
+
+
+/* Respect operating-system motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
 }

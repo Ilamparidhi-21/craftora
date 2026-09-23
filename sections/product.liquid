@@ -464,6 +464,7 @@
     <div
       class="boutique-size-guide"
       data-size-guide
+      aria-hidden="true"
       hidden
     >
 
@@ -475,7 +476,13 @@
       ></button>
 
 
-      <div class="boutique-size-guide__panel">
+      <div
+        class="boutique-size-guide__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="BoutiqueSizeGuideHeading-{{ section.id }}"
+        tabindex="-1"
+      >
 
         <button
           type="button"
@@ -486,7 +493,7 @@
           ×
         </button>
 
-        <h2>
+        <h2 id="BoutiqueSizeGuideHeading-{{ section.id }}">
           {{ section.settings.size_guide_page.title }}
         </h2>
 
@@ -1724,6 +1731,95 @@ document.addEventListener('DOMContentLoaded', function () {
       '[data-size-guide]'
     );
 
+  const sizeGuidePanel =
+    sizeGuide
+      ? sizeGuide.querySelector(
+          '.boutique-size-guide__panel'
+        )
+      : null;
+
+  let sizeGuideTrigger = null;
+
+
+  function getSizeGuideFocusableElements() {
+
+    if (!sizeGuide) return [];
+
+    return Array.from(
+      sizeGuide.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter(function (element) {
+
+      return !element.hasAttribute('hidden');
+
+    });
+
+  }
+
+
+  function openSizeGuide(trigger) {
+
+    if (!sizeGuide) return;
+
+    sizeGuideTrigger = trigger;
+
+    sizeGuide.hidden = false;
+
+    sizeGuide.setAttribute(
+      'aria-hidden',
+      'false'
+    );
+
+    document.body.style.overflow =
+      'hidden';
+
+
+    window.requestAnimationFrame(
+      function () {
+
+        const focusable =
+          getSizeGuideFocusableElements();
+
+        if (focusable.length) {
+
+          focusable[0].focus();
+
+        } else if (sizeGuidePanel) {
+
+          sizeGuidePanel.focus();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  function closeSizeGuide() {
+
+    if (!sizeGuide) return;
+
+    sizeGuide.hidden = true;
+
+    sizeGuide.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+
+    document.body.style.overflow =
+      '';
+
+
+    if (sizeGuideTrigger) {
+
+      sizeGuideTrigger.focus();
+
+    }
+
+  }
+
 
   productSection
     .querySelectorAll(
@@ -1735,12 +1831,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'click',
         function () {
 
-          if (!sizeGuide) return;
-
-          sizeGuide.hidden = false;
-
-          document.body.style.overflow =
-            'hidden';
+          openSizeGuide(button);
 
         }
       );
@@ -1756,19 +1847,83 @@ document.addEventListener('DOMContentLoaded', function () {
 
       button.addEventListener(
         'click',
-        function () {
-
-          if (!sizeGuide) return;
-
-          sizeGuide.hidden = true;
-
-          document.body.style.overflow =
-            '';
-
-        }
+        closeSizeGuide
       );
 
     });
+
+
+  if (sizeGuide) {
+
+    sizeGuide.addEventListener(
+      'keydown',
+      function (event) {
+
+        if (event.key === 'Escape') {
+
+          event.preventDefault();
+
+          closeSizeGuide();
+
+          return;
+
+        }
+
+
+        if (event.key !== 'Tab') {
+          return;
+        }
+
+
+        const focusable =
+          getSizeGuideFocusableElements();
+
+        if (!focusable.length) {
+
+          event.preventDefault();
+
+          if (sizeGuidePanel) {
+            sizeGuidePanel.focus();
+          }
+
+          return;
+
+        }
+
+
+        const first =
+          focusable[0];
+
+        const last =
+          focusable[
+            focusable.length - 1
+          ];
+
+
+        if (
+          event.shiftKey &&
+          document.activeElement === first
+        ) {
+
+          event.preventDefault();
+
+          last.focus();
+
+        } else if (
+          !event.shiftKey &&
+          document.activeElement === last
+        ) {
+
+          event.preventDefault();
+
+          first.focus();
+
+        }
+
+      }
+    );
+
+  }
 
 });
 </script>
