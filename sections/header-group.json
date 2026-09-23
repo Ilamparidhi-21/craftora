@@ -13,10 +13,26 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "show_announcement": true,
+        "announcement_text": "COMPLIMENTARY SHIPPING ON ORDERS OVER ₹1,999",
+        "announcement_link": "",
+        "announcement_background": "#292929",
+        "announcement_text_color": "#ffffff",
+        "logo_width": 150,
+        "show_tagline": true,
+        "tagline": "WEAR YOUR STORY",
+        "menu": "main-menu",
+        "customer_account_menu": "customer-account-main-menu",
+        "show_search": true,
+        "show_wishlist_icon": true,
+        "sticky_header": true,
+        "background_color": "#ffffff",
+        "text_color": "#151515"
+      }
     }
   },
   "order": [
     "header"
-  ],
+  ]
 }

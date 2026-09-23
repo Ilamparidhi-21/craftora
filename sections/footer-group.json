@@ -11,6 +11,29 @@
   "type": "footer",
   "name": "t:general.footer",
   "sections": {
+    "boutique_footer_GnQqcX": {
+      "type": "boutique-footer",
+      "name": "Boutique footer",
+      "settings": {
+        "tagline": "Thoughtfully selected fashion for everyday expression.",
+        "menu_1_heading": "SHOP",
+        "menu_1": "",
+        "menu_2_heading": "INFORMATION",
+        "menu_2": "",
+        "contact_heading": "NEED HELP?",
+        "contact_text": "<p>Questions about sizing, styling or your order? We're here to help.</p>",
+        "contact_email": "hello@example.com",
+        "instagram_url": "",
+        "facebook_url": "",
+        "pinterest_url": "",
+        "tiktok_url": "",
+        "copyright_text": "All rights reserved.",
+        "show_payment_icons": true,
+        "background_color": "#171717",
+        "text_color": "#F5F1EA",
+        "border_color": "#3A3A3A"
+      }
+    },
     "footer": {
       "type": "footer",
       "settings": {
@@ -20,6 +43,7 @@
     }
   },
   "order": [
+    "boutique_footer_GnQqcX",
     "footer"
   ]
 }

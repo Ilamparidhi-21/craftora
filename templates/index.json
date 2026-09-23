@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "boutique_hero": {
@@ -7,15 +16,259 @@
         "heading": "Modern Styles\nTimeless You",
         "description": "<p>Effortless fashion for every chapter of your story.</p>",
         "button_1_text": "SHOP NEW ARRIVALS",
+        "button_1_link": "",
         "button_2_text": "EXPLORE EDITS",
+        "button_2_link": "",
         "image_caption": "Fashion feels better here",
         "desktop_height": 680,
-        "background_color": "#EAE5DD",
+        "background_color": "#eae5dd",
         "text_color": "#171717"
+      }
+    },
+    "boutique_categories_4fUCJg": {
+      "type": "boutique-categories",
+      "blocks": {
+        "category_zE4CDn": {
+          "type": "category",
+          "settings": {
+            "title": "Dresses",
+            "button_text": "SHOP NOW",
+            "link": ""
+          }
+        },
+        "category_y3HeAM": {
+          "type": "category",
+          "settings": {
+            "title": "Tops",
+            "button_text": "SHOP NOW",
+            "link": ""
+          }
+        },
+        "category_VczAmQ": {
+          "type": "category",
+          "settings": {
+            "title": "Co-ords",
+            "button_text": "SHOP NOW",
+            "link": ""
+          }
+        },
+        "category_xw4RTW": {
+          "type": "category",
+          "settings": {
+            "title": "Accessories",
+            "button_text": "SHOP NOW",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "category_zE4CDn",
+        "category_y3HeAM",
+        "category_VczAmQ",
+        "category_xw4RTW"
+      ],
+      "name": "Shop by category",
+      "settings": {
+        "heading": "SHOP BY CATEGORY",
+        "background_color": "#ffffff",
+        "text_color": "#171717"
+      }
+    },
+    "boutique_new_arrivals_dinE9g": {
+      "type": "boutique-new-arrivals",
+      "name": "New arrivals",
+      "settings": {
+        "heading": "NEW ARRIVALS",
+        "subheading": "Discover the latest pieces in our boutique.",
+        "collection": "",
+        "products_to_show": 4,
+        "view_all_text": "VIEW ALL",
+        "show_vendor": false,
+        "background_color": "#ffffff",
+        "text_color": "#171717"
+      }
+    },
+    "boutique_editorial_j8Lk8M": {
+      "type": "boutique-editorial",
+      "name": "Editorial banner",
+      "settings": {
+        "image_position": "right",
+        "eyebrow": "THE EDIT",
+        "heading": "Every Outfit\nA New Mood",
+        "text": "<p>Modern silhouettes, elevated essentials and effortless pieces designed for everyday luxury.</p>",
+        "button_text": "DISCOVER MORE",
+        "button_link": "",
+        "desktop_height": 610,
+        "background_color": "#ded8cf",
+        "text_color": "#171717"
+      }
+    },
+    "boutique_shop_the_look_QEGaAk": {
+      "type": "boutique-shop-the-look",
+      "blocks": {
+        "product_UfiRaA": {
+          "type": "product",
+          "settings": {
+            "product": "",
+            "label": "COMPLETE THE LOOK"
+          }
+        },
+        "product_wMTA3L": {
+          "type": "product",
+          "settings": {
+            "product": "",
+            "label": "COMPLETE THE LOOK"
+          }
+        }
+      },
+      "block_order": [
+        "product_UfiRaA",
+        "product_wMTA3L"
+      ],
+      "name": "Shop the look",
+      "settings": {
+        "eyebrow": "SHOP THE LOOK",
+        "heading": "Styled Together",
+        "description": "<p>Complete the look with pieces designed to work beautifully together.</p>",
+        "background_color": "#F2EEE8",
+        "text_color": "#171717"
+      }
+    },
+    "boutique_benefits_ejc46x": {
+      "type": "boutique-benefits",
+      "blocks": {
+        "benefit_iqhN9D": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shipping",
+            "heading": "Complimentary Shipping",
+            "text": "Available on qualifying orders."
+          }
+        },
+        "benefit_CmXrrw": {
+          "type": "benefit",
+          "settings": {
+            "icon": "returns",
+            "heading": "Easy Returns",
+            "text": "Simple and convenient returns."
+          }
+        },
+        "benefit_wc9LEW": {
+          "type": "benefit",
+          "settings": {
+            "icon": "secure",
+            "heading": "Secure Checkout",
+            "text": "Protected and trusted payments."
+          }
+        },
+        "benefit_dTdjEQ": {
+          "type": "benefit",
+          "settings": {
+            "icon": "support",
+            "heading": "Personal Service",
+            "text": "Here when you need assistance."
+          }
+        }
+      },
+      "block_order": [
+        "benefit_iqhN9D",
+        "benefit_CmXrrw",
+        "benefit_wc9LEW",
+        "benefit_dTdjEQ"
+      ],
+      "name": "Boutique benefits",
+      "settings": {
+        "background_color": "#F7F4EF",
+        "text_color": "#171717",
+        "border_color": "#DDD7CF"
+      }
+    },
+    "boutique_campaign_banner_xFEmcg": {
+      "type": "boutique-campaign-banner",
+      "name": "Campaign banner",
+      "settings": {
+        "eyebrow": "NEW SEASON",
+        "heading": "The Autumn Edit",
+        "description": "<p>Soft layers, considered textures and effortless silhouettes for the season ahead.</p>",
+        "button_text": "EXPLORE THE COLLECTION",
+        "button_link": "",
+        "content_position": "center-left",
+        "text_alignment": "left",
+        "desktop_height": 650,
+        "overlay_opacity": 25,
+        "text_color": "#ffffff"
+      }
+    },
+    "boutique_testimonials_Lcaqry": {
+      "type": "boutique-testimonials",
+      "blocks": {
+        "testimonial_hbN9yn": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Beautiful quality and the fit was exactly what I hoped for.",
+            "name": "ANANYA",
+            "details": "Verified customer"
+          }
+        },
+        "testimonial_EJ8gpR": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The pieces feel effortless but still look beautifully put together.",
+            "name": "MEERA",
+            "details": "Verified customer"
+          }
+        },
+        "testimonial_8t8Y8y": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Packaging, quality and styling were all exceptional.",
+            "name": "RHEA",
+            "details": "Verified customer"
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_hbN9yn",
+        "testimonial_EJ8gpR",
+        "testimonial_8t8Y8y"
+      ],
+      "name": "Boutique testimonials",
+      "settings": {
+        "eyebrow": "CUSTOMER LOVE",
+        "heading": "Loved By You",
+        "description": "<p>Thoughtfully chosen pieces, worn and loved by our community.</p>",
+        "show_stars": true,
+        "background_color": "#F5F1EB",
+        "text_color": "#171717",
+        "border_color": "#D8D1C8"
+      }
+    },
+    "boutique_newsletter_LHVf8f": {
+      "type": "boutique-newsletter",
+      "name": "Boutique newsletter",
+      "settings": {
+        "eyebrow": "STAY IN THE KNOW",
+        "heading": "A Little Something For Your Inbox",
+        "description": "<p>Be first to discover new arrivals, private edits and boutique stories.</p>",
+        "placeholder": "Your email address",
+        "button_text": "JOIN US",
+        "success_text": "Thank you for joining us.",
+        "small_text": "By subscribing, you agree to receive marketing emails.",
+        "background_color": "#E7E0D6",
+        "text_color": "#171717",
+        "border_color": "#8C857D"
       }
     }
   },
   "order": [
-    "boutique_hero"
+    "boutique_hero",
+    "boutique_categories_4fUCJg",
+    "boutique_new_arrivals_dinE9g",
+    "boutique_editorial_j8Lk8M",
+    "boutique_shop_the_look_QEGaAk",
+    "boutique_benefits_ejc46x",
+    "boutique_campaign_banner_xFEmcg",
+    "boutique_testimonials_Lcaqry",
+    "boutique_newsletter_LHVf8f"
   ]
 }
