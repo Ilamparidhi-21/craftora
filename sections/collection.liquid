@@ -616,9 +616,9 @@
 
 .boutique-collection__banner {
   width: min(calc(100% - 50px), 1450px);
-
-  height: 430px;
-
+  
+  height: clamp(300px, 35vw, 430px);
+  
   margin: 0 auto 45px;
 
   overflow: hidden;
@@ -713,9 +713,11 @@
   top: 42px;
   left: 0;
 
-  width: 360px;
-
+  width: min(360px, calc(100vw - 32px));
+  
   max-height: 70vh;
+  
+  box-sizing: border-box;  
 
   overflow-y: auto;
 

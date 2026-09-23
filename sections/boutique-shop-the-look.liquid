@@ -406,7 +406,9 @@
   }
 
   .boutique-look__media {
-    min-height: 520px;
+    min-height: 0;
+
+    height: clamp(420px, 125vw, 520px);
   }
 
   .boutique-look__content {
@@ -425,7 +427,9 @@
 @media screen and (max-width: 420px) {
 
   .boutique-look__media {
-    min-height: 430px;
+    min-height: 0;
+
+    height: 430px;
   }
 
   .boutique-look__content h2 {
