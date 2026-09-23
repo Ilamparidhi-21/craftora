@@ -1,5 +1,6 @@
 <section
   class="boutique-look"
+  data-boutique-look
   style="
     --look-bg: {{ section.settings.background_color }};
     --look-text: {{ section.settings.text_color }};
@@ -53,6 +54,9 @@
       {% endif %}
 
 
+      {% assign look_product_count = 0 %}
+      {% assign look_available_count = 0 %}
+
       <div class="boutique-look__products">
 
         {% for block in section.blocks %}
@@ -61,8 +65,16 @@
 
           {% if product != blank %}
 
+            {% assign look_product_count = look_product_count | plus: 1 %}
+
+            {% if product.available %}
+              {% assign look_available_count = look_available_count | plus: 1 %}
+            {% endif %}
+
             <article
               class="boutique-look-product"
+              data-look-variant-id="{{ product.selected_or_first_available_variant.id }}"
+              data-look-available="{{ product.available }}"
               {{ block.shopify_attributes }}
             >
 
@@ -79,7 +91,8 @@
                     | image_tag:
                       loading: 'lazy',
                       widths: '250, 400, 550, 700',
-                      sizes: '(min-width: 768px) 180px, 40vw'
+                      sizes: '(min-width: 768px) 180px, 40vw',
+                      alt: product.title
                   }}
 
                 {% endif %}
@@ -96,17 +109,29 @@
                 {% endif %}
 
 
-                <a
-                  href="{{ product.url }}"
-                  class="boutique-look-product__title"
-                >
-                  {{ product.title }}
-                </a>
+                <div class="boutique-look-product__title-row">
+
+                  <a
+                    href="{{ product.url }}"
+                    class="boutique-look-product__title"
+                  >
+                    {{ product.title }}
+                  </a>
+
+                  {% render 'wishlist-button', product: product %}
+
+                </div>
 
 
                 <div class="boutique-look-product__price">
 
-                  {% if product.compare_at_price > product.price %}
+                  {% if product.price_varies %}
+
+                    <span>
+                      From {{ product.price_min | money }}
+                    </span>
+
+                  {% elsif product.compare_at_price > product.price %}
 
                     <span>
                       {{ product.price | money }}
@@ -129,17 +154,17 @@
                   href="{{ product.url }}"
                   class="boutique-look-product__button"
                 >
-                  VIEW PRODUCT
+                  SHOP NOW
                 </a>
 
               </div>
 
             </article>
 
-          {% else %}
+          {% elsif request.design_mode %}
 
             <article
-              class="boutique-look-product"
+              class="boutique-look-product boutique-look-product--placeholder"
               {{ block.shopify_attributes }}
             >
 
@@ -154,12 +179,8 @@
                 </span>
 
                 <span class="boutique-look-product__title">
-                  Example product
+                  Select a product
                 </span>
-
-                <div class="boutique-look-product__price">
-                  {{ 199900 | money }}
-                </div>
 
               </div>
 
@@ -170,6 +191,29 @@
         {% endfor %}
 
       </div>
+
+      {% if look_available_count > 1 %}
+
+        <div class="boutique-look__bundle">
+
+          <button
+            type="button"
+            class="boutique-look__bundle-button"
+            data-shop-look
+          >
+            SHOP THE LOOK
+          </button>
+
+          <p
+            class="boutique-look__bundle-status"
+            data-look-status
+            role="status"
+            aria-live="polite"
+          ></p>
+
+        </div>
+
+      {% endif %}
 
     </div>
 
@@ -438,7 +482,272 @@
 
 }
 
+
+
+/* Shop the Look upgrade */
+
+.boutique-look-product__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.boutique-look-product__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 14px;
+  padding: 10px 18px;
+
+  border: 1px solid currentColor;
+
+  background: transparent;
+  color: inherit;
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1;
+
+  text-decoration: none;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.boutique-look-product__button:hover,
+.boutique-look-product__button:focus-visible {
+  background: var(--look-text);
+  color: var(--look-bg);
+  transform: translateY(-2px);
+}
+
+.boutique-look__bundle {
+  margin-top: 32px;
+}
+
+.boutique-look__bundle-button {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 14px 22px;
+
+  border: 1px solid var(--look-text);
+
+  background: var(--look-text);
+  color: var(--look-bg);
+
+  cursor: pointer;
+
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.boutique-look__bundle-button:hover,
+.boutique-look__bundle-button:focus-visible {
+  opacity: 0.82;
+  transform: translateY(-2px);
+}
+
+.boutique-look__bundle-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.boutique-look__bundle-status {
+  min-height: 20px;
+  margin: 10px 0 0;
+
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boutique-look-product__button,
+  .boutique-look__bundle-button {
+    transition: none;
+  }
+
+  .boutique-look-product__button:hover,
+  .boutique-look-product__button:focus-visible,
+  .boutique-look__bundle-button:hover,
+  .boutique-look__bundle-button:focus-visible {
+    transform: none;
+  }
+}
+
 {% endstylesheet %}
+
+
+
+
+<script>
+  /* Boutique Shop the Look */
+
+  (function () {
+
+    function initBoutiqueLooks(scope) {
+
+      var sections = scope.querySelectorAll
+        ? scope.querySelectorAll('[data-boutique-look]')
+        : [];
+
+      sections.forEach(function (section) {
+
+        if (section.dataset.lookInitialized === 'true') {
+          return;
+        }
+
+        section.dataset.lookInitialized = 'true';
+
+        var button = section.querySelector('[data-shop-look]');
+
+        if (!button) {
+          return;
+        }
+
+        var status = section.querySelector('[data-look-status]');
+
+        button.addEventListener('click', async function () {
+
+          var productCards = Array.from(
+            section.querySelectorAll(
+              '[data-look-variant-id][data-look-available="true"]'
+            )
+          );
+
+          var items = productCards
+            .map(function (card) {
+              return {
+                id: Number(card.dataset.lookVariantId),
+                quantity: 1
+              };
+            })
+            .filter(function (item) {
+              return Number.isFinite(item.id) && item.id > 0;
+            });
+
+          if (items.length === 0) {
+            if (status) {
+              status.textContent = 'No available products in this look.';
+            }
+            return;
+          }
+
+          var originalText = button.textContent;
+
+          button.disabled = true;
+          button.textContent = 'ADDING...';
+
+          if (status) {
+            status.textContent = '';
+          }
+
+          try {
+
+            var root =
+              window.Shopify &&
+              Shopify.routes &&
+              Shopify.routes.root
+                ? Shopify.routes.root
+                : '/';
+
+            var response = await fetch(
+              root + 'cart/add.js',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                  items: items
+                })
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error('Unable to add the look to cart.');
+            }
+
+            var cartResponse = await fetch(root + 'cart.js');
+
+            if (!cartResponse.ok) {
+              throw new Error('Unable to refresh cart.');
+            }
+
+            var cart = await cartResponse.json();
+
+            if (status) {
+              status.textContent =
+                items.length +
+                (items.length === 1
+                  ? ' item added to your bag.'
+                  : ' items added to your bag.');
+            }
+
+            document.dispatchEvent(
+              new CustomEvent(
+                'boutique:cart:updated',
+                {
+                  detail: {
+                    cart: cart
+                  }
+                }
+              )
+            );
+
+          } catch (error) {
+
+            if (status) {
+              status.textContent =
+                'Something went wrong. Please try again.';
+            }
+
+            console.error(error);
+
+          } finally {
+
+            button.disabled = false;
+            button.textContent = originalText;
+
+          }
+
+        });
+
+      });
+
+    }
+
+
+    if (!window.BoutiqueShopTheLook) {
+
+      window.BoutiqueShopTheLook = {
+        init: initBoutiqueLooks
+      };
+
+      document.addEventListener(
+        'shopify:section:load',
+        function (event) {
+          initBoutiqueLooks(event.target);
+        }
+      );
+
+    }
+
+    window.BoutiqueShopTheLook.init(document);
+
+  })();
+</script>
 
 
 {% schema %}

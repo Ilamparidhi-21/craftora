@@ -273,11 +273,15 @@
 
         {{ 'icon-cart.svg' | inline_asset_content }}
 
-        {% if cart.item_count > 0 %}
-          <span class="boutique-cart-count">
-            {{ cart.item_count }}
-          </span>
-        {% endif %}
+        <span
+          class="boutique-cart-count"
+          data-cart-count
+          {% if cart.item_count == 0 %}
+            hidden
+          {% endif %}
+        >
+          {{ cart.item_count }}
+        </span>
 
       </a>
 

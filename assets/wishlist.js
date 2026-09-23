@@ -624,3 +624,63 @@
   }
 
 })();
+
+
+/* Boutique cart count sync */
+(function () {
+  if (window.__boutiqueCartCountSyncBound) return;
+
+  window.__boutiqueCartCountSyncBound = true;
+
+  async function syncBoutiqueCartCount() {
+    try {
+      const root =
+        window.Shopify &&
+        window.Shopify.routes &&
+        window.Shopify.routes.root
+          ? window.Shopify.routes.root
+          : '/';
+
+      const response = await fetch(`${root}cart.js`, {
+        headers: {
+          Accept: 'application/json'
+        }
+      });
+
+      if (!response.ok) return;
+
+      const cart = await response.json();
+
+      const count = Number(cart.item_count || 0);
+
+      document
+        .querySelectorAll('[data-cart-count]')
+        .forEach(function (element) {
+          element.textContent = String(count);
+          element.hidden = count === 0;
+        });
+
+      document
+        .querySelectorAll('.boutique-cart')
+        .forEach(function (link) {
+          link.setAttribute(
+            'aria-label',
+            count === 1
+              ? 'Cart, 1 item'
+              : `Cart, ${count} items`
+          );
+        });
+
+    } catch (error) {
+      console.error(
+        'Unable to update cart count.',
+        error
+      );
+    }
+  }
+
+  document.addEventListener(
+    'boutique:cart:updated',
+    syncBoutiqueCartCount
+  );
+})();

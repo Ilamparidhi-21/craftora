@@ -62,9 +62,8 @@
             </h3>
 
             {% if block.settings.button_text != blank %}
-              <span>
+              <span class="boutique-category__cta">
                 {{ block.settings.button_text }}
-                →
               </span>
             {% endif %}
 
@@ -281,6 +280,81 @@
     height: clamp(380px, 120vw, 430px);
   }
 
+}
+
+
+
+/* Category image hover */
+.boutique-category__image {
+  overflow: hidden;
+}
+
+.boutique-category__image img,
+.boutique-category__image svg {
+  transition: transform 0.45s ease;
+}
+
+.boutique-category:hover .boutique-category__image img,
+.boutique-category:hover .boutique-category__image svg,
+.boutique-category:focus-visible .boutique-category__image img,
+.boutique-category:focus-visible .boutique-category__image svg {
+  transform: scale(1.035);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boutique-category__image img,
+  .boutique-category__image svg {
+    transition: none;
+  }
+
+  .boutique-category:hover .boutique-category__image img,
+  .boutique-category:hover .boutique-category__image svg,
+  .boutique-category:focus-visible .boutique-category__image img,
+  .boutique-category:focus-visible .boutique-category__image svg {
+    transform: none;
+  }
+}
+
+
+
+/* Category CTA button */
+.boutique-category__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 10px;
+  padding: 9px 14px;
+
+  border: 1px solid currentColor;
+
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.boutique-category:hover .boutique-category__cta,
+.boutique-category:focus-visible .boutique-category__cta {
+  background: #ffffff;
+  color: #111111;
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boutique-category__cta {
+    transition: none;
+  }
+
+  .boutique-category:hover .boutique-category__cta,
+  .boutique-category:focus-visible .boutique-category__cta {
+    transform: none;
+  }
 }
 
 {% endstylesheet %}
