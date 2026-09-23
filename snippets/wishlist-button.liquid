@@ -1,0 +1,29 @@
+{% if product != blank %}
+  <button
+    type="button"
+    class="boutique-wishlist-toggle{% if show_text %} boutique-wishlist-toggle--text{% endif %}"
+    data-wishlist-toggle
+    data-product-handle="{{ product.handle | escape }}"
+    data-product-title="{{ product.title | escape }}"
+    aria-pressed="false"
+    aria-label="Add {{ product.title | escape }} to wishlist"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      aria-hidden="true"
+    >
+      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"></path>
+    </svg>
+
+    {% if show_text %}
+      <span data-wishlist-button-text>
+        ADD TO WISHLIST
+      </span>
+    {% endif %}
+  </button>
+{% endif %}

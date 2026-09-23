@@ -24,7 +24,7 @@
         "menu": "main-menu",
         "customer_account_menu": "customer-account-main-menu",
         "show_search": true,
-        "show_wishlist_icon": false,
+        "show_wishlist_icon": true,
         "sticky_header": true,
         "background_color": "#ffffff",
         "text_color": "#151515"

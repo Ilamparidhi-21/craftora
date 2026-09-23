@@ -88,9 +88,10 @@
                   {{ product.title }}
                 </a>
 
-                <span class="boutique-product-heart">
-                  ♡
-                </span>
+                {% render
+                  'wishlist-button',
+                  product: product
+                %}
 
               </div>
 

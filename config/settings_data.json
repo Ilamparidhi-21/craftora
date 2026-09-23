@@ -13,6 +13,7 @@
     "logo_width": 80,
     "favicon": "shopify://shop_images/download-removebg-preview.png",
     "type_primary_font": "sans_serif_n4",
+    "wishlist_page": "whishlist",
     "content_for_index": []
   }
 }

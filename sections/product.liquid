@@ -369,6 +369,13 @@
           </button>
 
 
+          {% render
+            'wishlist-button',
+            product: product,
+            show_text: true
+          %}
+
+
           {% if section.settings.show_dynamic_checkout %}
 
             <div class="boutique-product__buy-now">

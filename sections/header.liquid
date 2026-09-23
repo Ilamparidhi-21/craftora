@@ -226,11 +226,14 @@
       {% endif %}
 
 
-      {% if section.settings.show_wishlist_icon %}
+      {% if section.settings.show_wishlist_icon
+        and settings.wishlist_page != blank
+      %}
         <a
-          href="{{ routes.root_url }}"
+          href="{{ settings.wishlist_page.url }}"
           class="boutique-icon-button boutique-wishlist"
           aria-label="Wishlist"
+          data-wishlist-link
         >
 
           <svg
@@ -240,9 +243,18 @@
             fill="none"
             stroke="currentColor"
             stroke-width="1.5"
+            aria-hidden="true"
           >
             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"></path>
           </svg>
+
+          <span
+            class="boutique-wishlist-count"
+            data-wishlist-count
+            hidden
+          >
+            0
+          </span>
 
         </a>
       {% endif %}

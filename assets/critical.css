@@ -187,3 +187,92 @@ body {
   }
 
 }
+
+
+/* Wishlist controls */
+
+.boutique-wishlist-toggle {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: currentColor;
+
+  cursor: pointer;
+}
+
+.boutique-wishlist-toggle svg {
+  pointer-events: none;
+}
+
+.boutique-wishlist-toggle.is-active svg {
+  fill: currentColor;
+}
+
+.boutique-wishlist-toggle--text {
+  width: 100%;
+  min-height: var(--button-height);
+
+  gap: 10px;
+
+  margin-top: 12px;
+
+  padding:
+    12px
+    18px;
+
+  border:
+    1px solid currentColor;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
+}
+
+.boutique-wishlist {
+  position: relative;
+}
+
+.boutique-wishlist-count {
+  position: absolute;
+
+  top: -5px;
+  right: -7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 16px;
+  height: 16px;
+
+  padding:
+    0
+    4px;
+
+  border-radius: 999px;
+
+  background:
+    var(--header-foreground, currentColor);
+
+  color:
+    var(--header-background, #ffffff);
+
+  font-size: 9px;
+  line-height: 1;
+}
+
+.boutique-wishlist-count[hidden] {
+  display: none;
+}

@@ -91,9 +91,10 @@
                   {{ related_product.title }}
                 </a>
 
-                <span aria-hidden="true">
-                  ♡
-                </span>
+                {% render
+                  'wishlist-button',
+                  product: related_product
+                %}
 
               </div>
 

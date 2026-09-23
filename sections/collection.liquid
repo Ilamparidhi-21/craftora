@@ -403,9 +403,10 @@
                   {{ product.title }}
                 </a>
 
-                <span class="boutique-product-card__heart" aria-hidden="true">
-                  ♡
-                </span>
+                {% render
+                  'wishlist-button',
+                  product: product
+                %}
 
               </div>
 

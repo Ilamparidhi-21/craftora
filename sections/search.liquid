@@ -201,9 +201,10 @@
                           {{ result.title }}
                         </a>
 
-                        <span aria-hidden="true">
-                          ♡
-                        </span>
+                        {% render
+                          'wishlist-button',
+                          product: result
+                        %}
 
                       </div>
 

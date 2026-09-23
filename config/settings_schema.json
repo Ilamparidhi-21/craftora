@@ -203,6 +203,20 @@
     ]
   },
   {
+    "name": "Wishlist",
+    "settings": [
+      {
+        "type": "page",
+        "id": "wishlist_page",
+        "label": "Wishlist page"
+      },
+      {
+        "type": "paragraph",
+        "content": "Wishlist items are stored in the customer's browser on this device."
+      }
+    ]
+  },
+  {
     "name": "Animations",
     "settings": [
       {
