@@ -64,6 +64,8 @@
 
       {% if section.settings.image != blank %}
 
+        {% assign hero_image_alt = section.settings.image.alt | default: section.settings.heading %}
+
         {{
           section.settings.image
           | image_url: width: 2000
@@ -71,6 +73,7 @@
             loading: 'eager',
             widths: '600, 900, 1200, 1600, 2000',
             sizes: '(min-width: 768px) 55vw, 100vw',
+            alt: hero_image_alt,
             class: 'boutique-hero__image'
         }}
 

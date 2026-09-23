@@ -44,13 +44,16 @@
 
               {% if product.featured_image != blank %}
 
+                {% assign product_image_alt = product.featured_image.alt | default: product.title %}
+
                 {{
                   product.featured_image
                   | image_url: width: 1000
                   | image_tag:
                     loading: 'lazy',
                     widths: '300, 500, 700, 1000',
-                    sizes: '(min-width: 990px) 25vw, 50vw'
+                    sizes: '(min-width: 990px) 25vw, 50vw',
+                    alt: product_image_alt
                 }}
 
               {% else %}

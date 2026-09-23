@@ -146,13 +146,21 @@
 
           {% if form.posted_successfully? %}
 
-            <p class="boutique-comment-form__success">
+            <p class="boutique-comment-form__success" role="status" aria-live="polite">
               Thank you. Your comment has been submitted.
             </p>
 
           {% endif %}
 
-          {{ form.errors | default_errors }}
+          {% if form.errors %}
+            <div
+              class="boutique-comment-form__errors"
+              role="alert"
+              aria-live="assertive"
+            >
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
 
 
           <div class="boutique-comment-form__row">

@@ -68,7 +68,7 @@
 
         {% if form.posted_successfully? %}
 
-          <p class="boutique-newsletter__success">
+          <p class="boutique-newsletter__success" role="status" aria-live="polite">
             {{ section.settings.success_text }}
           </p>
 
@@ -77,7 +77,7 @@
 
         {% if form.errors %}
 
-          <div class="boutique-newsletter__error">
+          <div class="boutique-newsletter__error" role="alert" aria-live="assertive">
             {{ form.errors | default_errors }}
           </div>
 

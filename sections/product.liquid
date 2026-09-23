@@ -82,7 +82,8 @@
                 | image_tag:
                   loading: 'lazy',
                   widths: '100, 160, 240',
-                  sizes: '90px'
+                  sizes: '90px',
+                  alt: ''
               }}
 
             </button>
@@ -1751,7 +1752,12 @@ document.addEventListener('DOMContentLoaded', function () {
       )
     ).filter(function (element) {
 
-      return !element.hasAttribute('hidden');
+      return (
+        !element.hasAttribute('hidden') &&
+        !element.classList.contains(
+          'boutique-size-guide__overlay'
+        )
+      );
 
     });
 

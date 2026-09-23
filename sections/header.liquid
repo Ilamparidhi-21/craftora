@@ -31,7 +31,7 @@
 
     <!-- MOBILE MENU -->
     <details class="boutique-mobile-menu">
-      <summary class="boutique-icon-button" aria-label="Open menu">
+      <summary class="boutique-icon-button" aria-label="Menu">
 
         <svg
           viewBox="0 0 24 24"
@@ -50,7 +50,7 @@
 
       <div class="boutique-mobile-drawer">
 
-        <nav class="boutique-mobile-navigation">
+        <nav class="boutique-mobile-navigation" aria-label="Mobile navigation">
 
           {% for link in section.settings.menu.links %}
 
@@ -91,7 +91,7 @@
 
 
     <!-- LEFT NAVIGATION -->
-    <nav class="boutique-navigation boutique-navigation--left">
+    <nav class="boutique-navigation boutique-navigation--left" aria-label="Main navigation">
 
       {% for link in section.settings.menu.links %}
 

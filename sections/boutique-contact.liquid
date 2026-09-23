@@ -135,7 +135,7 @@
             class="boutique-contact__success"
             tabindex="-1"
             autofocus
-          >
+           role="status" aria-live="polite">
             {{ section.settings.success_message }}
           </div>
 
@@ -144,7 +144,7 @@
 
         {% if form.errors %}
 
-          <div class="boutique-contact__errors">
+          <div class="boutique-contact__errors" role="alert" aria-live="assertive">
             {{ form.errors | default_errors }}
           </div>
 

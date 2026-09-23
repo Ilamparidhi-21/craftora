@@ -35,6 +35,8 @@
   <!-- COLLECTION IMAGE -->
   {% if section.settings.show_collection_image and collection.featured_image != blank %}
 
+    {% assign collection_image_alt = collection.featured_image.alt | default: collection.title %}
+
     <div class="boutique-collection__banner">
 
       {{
@@ -43,7 +45,8 @@
         | image_tag:
           loading: 'eager',
           widths: '800, 1200, 1600, 2000, 2200',
-          sizes: '100vw'
+          sizes: '100vw',
+          alt: collection_image_alt
       }}
 
     </div>
@@ -330,6 +333,8 @@
 
               {% if product.featured_image != blank %}
 
+                {% assign collection_product_alt = product.featured_image.alt | default: product.title %}
+
                 {{
                   product.featured_image
                   | image_url: width: 1200
@@ -337,6 +342,7 @@
                     loading: 'lazy',
                     widths: '300, 500, 700, 900, 1200',
                     sizes: '(min-width: 990px) 25vw, 50vw',
+                    alt: collection_product_alt,
                     class: 'boutique-product-card__primary'
                 }}
 
@@ -356,6 +362,7 @@
                     loading: 'lazy',
                     widths: '300, 500, 700, 900, 1200',
                     sizes: '(min-width: 990px) 25vw, 50vw',
+                    alt: '',
                     class: 'boutique-product-card__secondary'
                 }}
 
