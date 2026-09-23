@@ -2,7 +2,84 @@
   "sections": {
     "main": {
       "type": "product",
-      "settings": {}
+      "settings": {},
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "inventory": {
+          "type": "inventory",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "show_size_guide": true
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true
+          }
+        },
+        "benefits": {
+          "type": "benefits",
+          "settings": {
+            "benefit_1_heading": "Secure checkout",
+            "benefit_1_text": "Protected payments",
+            "benefit_2_heading": "Easy returns",
+            "benefit_2_text": "Simple return process"
+          }
+        },
+        "shipping": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "SHIPPING",
+            "content": "<p>Orders are carefully prepared and dispatched as quickly as possible.</p>"
+          }
+        },
+        "returns": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "RETURNS",
+            "content": "<p>Returns are accepted according to the store's return policy.</p>"
+          }
+        },
+        "care": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "CARE & MATERIALS",
+            "content": "<p>Refer to the product care label for specific washing and care instructions.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "inventory",
+        "description",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "benefits",
+        "shipping",
+        "returns",
+        "care"
+      ]
     },
     "related_products": {
       "type": "boutique-related-products",

@@ -118,358 +118,425 @@
 
       <div class="boutique-product__info-inner">
 
-        {% if section.settings.show_vendor and product.vendor != blank %}
-          <p class="boutique-product__vendor">
-            {{ product.vendor }}
-          </p>
-        {% endif %}
+        {% assign product_form_id = 'BoutiqueProductForm-' | append: section.id %}
+
+        {% for block in section.blocks %}
+
+          {% case block.type %}
 
 
-        <h1 class="boutique-product__title">
-          {{ product.title }}
-        </h1>
+            {% when '@app' %}
+
+              {% render block %}
 
 
-        <!-- PRICE -->
+            {% when 'vendor' %}
 
-        <div class="boutique-product__price">
-
-          <span
-            class="boutique-product__current-price"
-            data-product-price
-          >
-            {{ current_variant.price | money }}
-          </span>
-
-          <s
-            class="boutique-product__compare-price"
-            data-product-compare-price
-            {% if current_variant.compare_at_price == blank or current_variant.compare_at_price <= current_variant.price %}
-              hidden
-            {% endif %}
-          >
-            {{ current_variant.compare_at_price | money }}
-          </s>
-
-        </div>
+              <p
+                class="boutique-product__vendor"
+                {{ block.shopify_attributes }}
+                {% if product.vendor == blank %}
+                  hidden
+                {% endif %}
+              >
+                {{ product.vendor }}
+              </p>
 
 
-        {% if section.settings.show_sku %}
-          <p
-            class="boutique-product__sku"
-            data-product-sku
-            {% if current_variant.sku == blank %}
-              hidden
-            {% endif %}
-          >
-            SKU: {{ current_variant.sku }}
-          </p>
-        {% endif %}
+            {% when 'title' %}
+
+              <h1
+                class="boutique-product__title"
+                {{ block.shopify_attributes }}
+              >
+                {{ product.title }}
+              </h1>
 
 
-        {% if section.settings.show_inventory %}
+            {% when 'price' %}
 
-          <div
-            class="boutique-product__inventory"
-            data-inventory-status
-          >
+              <div
+                class="boutique-product__price"
+                {{ block.shopify_attributes }}
+              >
 
-            {% if current_variant.available %}
-
-              {% if current_variant.inventory_management
-                and current_variant.inventory_quantity > 0
-                and current_variant.inventory_quantity <= section.settings.low_stock_threshold
-              %}
-
-                <span class="boutique-product__inventory-dot boutique-product__inventory-dot--low"></span>
-
-                Only {{ current_variant.inventory_quantity }} left
-
-              {% else %}
-
-                <span class="boutique-product__inventory-dot"></span>
-
-                In stock
-
-              {% endif %}
-
-            {% else %}
-
-              <span class="boutique-product__inventory-dot boutique-product__inventory-dot--sold"></span>
-
-              Sold out
-
-            {% endif %}
-
-          </div>
-
-        {% endif %}
-
-
-        <!-- DESCRIPTION -->
-
-        {% if product.description != blank %}
-
-          <div class="boutique-product__description">
-            {{ product.description }}
-          </div>
-
-        {% endif %}
-
-
-        <!-- PRODUCT FORM -->
-
-        {% form 'product', product, id: 'BoutiqueProductForm', class: 'boutique-product-form' %}
-
-          <input
-            type="hidden"
-            name="id"
-            value="{{ current_variant.id }}"
-            data-variant-id
-          >
-
-
-          <!-- OPTIONS -->
-
-          {% unless product.has_only_default_variant %}
-
-            <div class="boutique-product__options">
-
-              {% for option in product.options_with_values %}
-
-                {% assign option_index = forloop.index0 %}
-
-                <fieldset
-                  class="boutique-product__option"
-                  data-option-index="{{ option_index }}"
+                <span
+                  class="boutique-product__current-price"
+                  data-product-price
                 >
+                  {{ current_variant.price | money }}
+                </span>
 
-                  <legend>
+                <s
+                  class="boutique-product__compare-price"
+                  data-product-compare-price
+                  {% if current_variant.compare_at_price == blank
+                    or current_variant.compare_at_price <= current_variant.price
+                  %}
+                    hidden
+                  {% endif %}
+                >
+                  {{ current_variant.compare_at_price | money }}
+                </s>
 
-                    <span>
-                      {{ option.name }}
-                    </span>
-
-                    {% if option.name contains 'Size' or option.name contains 'size' %}
-
-                      {% if section.settings.size_guide_page != blank %}
-                        <button
-                          type="button"
-                          class="boutique-product__size-guide-trigger"
-                          data-size-guide-open
-                        >
-                          SIZE GUIDE
-                        </button>
-                      {% endif %}
-
-                    {% endif %}
-
-                  </legend>
+              </div>
 
 
-                  <div class="boutique-product__option-values">
+            {% when 'sku' %}
 
-                    {% for value in option.values %}
+              <p
+                class="boutique-product__sku"
+                data-product-sku
+                {{ block.shopify_attributes }}
+                {% if current_variant.sku == blank %}
+                  hidden
+                {% endif %}
+              >
+                SKU: {{ current_variant.sku }}
+              </p>
 
-                      {% assign selected_option_value = current_variant.options[option_index] %}
 
-                      <label class="boutique-product__option-value">
+            {% when 'inventory' %}
 
-                        <input
-                          type="radio"
-                          name="BoutiqueOption-{{ section.id }}-{{ option_index }}"
-                          value="{{ value | escape }}"
-                          {% if selected_option_value == value %}
-                            checked
-                          {% endif %}
-                        >
+              <div
+                class="boutique-product__inventory"
+                data-inventory-status
+                {{ block.shopify_attributes }}
+              >
+
+                {% if current_variant.available %}
+
+                  {% if current_variant.inventory_management
+                    and current_variant.inventory_quantity > 0
+                    and current_variant.inventory_quantity <= section.settings.low_stock_threshold
+                  %}
+
+                    <span
+                      class="boutique-product__inventory-dot boutique-product__inventory-dot--low"
+                    ></span>
+
+                    Only {{ current_variant.inventory_quantity }} left
+
+                  {% else %}
+
+                    <span
+                      class="boutique-product__inventory-dot"
+                    ></span>
+
+                    In stock
+
+                  {% endif %}
+
+                {% else %}
+
+                  <span
+                    class="boutique-product__inventory-dot boutique-product__inventory-dot--sold"
+                  ></span>
+
+                  Sold out
+
+                {% endif %}
+
+              </div>
+
+
+            {% when 'description' %}
+
+              <div
+                class="boutique-product__description"
+                {{ block.shopify_attributes }}
+                {% if product.description == blank %}
+                  hidden
+                {% endif %}
+              >
+                {{ product.description }}
+              </div>
+
+
+            {% when 'variant_picker' %}
+
+              <div
+                class="boutique-product__options"
+                {{ block.shopify_attributes }}
+              >
+
+                {% unless product.has_only_default_variant %}
+
+                  {% for option in product.options_with_values %}
+
+                    {% assign option_index = forloop.index0 %}
+
+                    <fieldset
+                      class="boutique-product__option"
+                      data-option-index="{{ option_index }}"
+                    >
+
+                      <legend>
 
                         <span>
-                          {{ value }}
+                          {{ option.name }}
                         </span>
 
-                      </label>
+                        {% if block.settings.show_size_guide %}
 
-                    {% endfor %}
+                          {% if option.name contains 'Size'
+                            or option.name contains 'size'
+                          %}
 
+                            {% if section.settings.size_guide_page != blank %}
+
+                              <button
+                                type="button"
+                                class="boutique-product__size-guide-trigger"
+                                data-size-guide-open
+                              >
+                                SIZE GUIDE
+                              </button>
+
+                            {% endif %}
+
+                          {% endif %}
+
+                        {% endif %}
+
+                      </legend>
+
+
+                      <div class="boutique-product__option-values">
+
+                        {% for value in option.values %}
+
+                          {% assign selected_option_value = current_variant.options[option_index] %}
+
+                          <label class="boutique-product__option-value">
+
+                            <input
+                              type="radio"
+                              name="BoutiqueOption-{{ section.id }}-{{ option_index }}"
+                              value="{{ value | escape }}"
+                              {% if selected_option_value == value %}
+                                checked
+                              {% endif %}
+                            >
+
+                            <span>
+                              {{ value }}
+                            </span>
+
+                          </label>
+
+                        {% endfor %}
+
+                      </div>
+
+                    </fieldset>
+
+                  {% endfor %}
+
+                {% endunless %}
+
+              </div>
+
+
+            {% when 'quantity_selector' %}
+
+              <div
+                class="boutique-product__quantity-row"
+                {{ block.shopify_attributes }}
+              >
+
+                <label for="BoutiqueQuantity-{{ section.id }}">
+                  QUANTITY
+                </label>
+
+                <div class="boutique-product__quantity">
+
+                  <button
+                    type="button"
+                    data-quantity-minus
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+
+                  <input
+                    id="BoutiqueQuantity-{{ section.id }}"
+                    type="number"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    inputmode="numeric"
+                    form="{{ product_form_id }}"
+                  >
+
+                  <button
+                    type="button"
+                    data-quantity-plus
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+
+                </div>
+
+              </div>
+
+
+            {% when 'buy_buttons' %}
+
+              <div
+                class="boutique-product__block boutique-product__block--buy-buttons"
+                {{ block.shopify_attributes }}
+              >
+
+                {% form
+                  'product',
+                  product,
+                  id: product_form_id,
+                  class: 'boutique-product-form'
+                %}
+
+                  <input
+                    type="hidden"
+                    name="id"
+                    value="{{ current_variant.id }}"
+                    data-variant-id
+                  >
+
+                  <button
+                    type="submit"
+                    class="boutique-product__add"
+                    data-add-to-cart
+                    {% unless current_variant.available %}
+                      disabled
+                    {% endunless %}
+                  >
+
+                    <span data-add-to-cart-text>
+
+                      {% if current_variant.available %}
+                        ADD TO CART
+                      {% else %}
+                        SOLD OUT
+                      {% endif %}
+
+                    </span>
+
+                    <span data-add-to-cart-price>
+                      {{ current_variant.price | money }}
+                    </span>
+
+                  </button>
+
+
+                  {% render
+                    'wishlist-button',
+                    product: product,
+                    show_text: true
+                  %}
+
+
+                  {% if block.settings.show_dynamic_checkout %}
+
+                    <div class="boutique-product__buy-now">
+                      {{ form | payment_button }}
+                    </div>
+
+                  {% endif %}
+
+                {% endform %}
+
+              </div>
+
+
+            {% when 'benefits' %}
+
+              <div
+                class="boutique-product__mini-benefits"
+                {{ block.shopify_attributes }}
+              >
+
+                <div>
+
+                  <span>◇</span>
+
+                  <p>
+
+                    <strong>
+                      {{ block.settings.benefit_1_heading }}
+                    </strong>
+
+                    <small>
+                      {{ block.settings.benefit_1_text }}
+                    </small>
+
+                  </p>
+
+                </div>
+
+
+                <div>
+
+                  <span>↺</span>
+
+                  <p>
+
+                    <strong>
+                      {{ block.settings.benefit_2_heading }}
+                    </strong>
+
+                    <small>
+                      {{ block.settings.benefit_2_text }}
+                    </small>
+
+                  </p>
+
+                </div>
+
+              </div>
+
+
+            {% when 'collapsible_tab' %}
+
+              <div
+                class="boutique-product__accordions"
+                {{ block.shopify_attributes }}
+              >
+
+                <details>
+
+                  <summary>
+
+                    {{ block.settings.heading }}
+
+                    <span aria-hidden="true">
+                      +
+                    </span>
+
+                  </summary>
+
+                  <div>
+                    {{ block.settings.content }}
                   </div>
 
-                </fieldset>
+                </details>
 
-              {% endfor %}
-
-            </div>
-
-          {% endunless %}
-
-
-          <!-- QUANTITY -->
-
-          <div class="boutique-product__quantity-row">
-
-            <label for="BoutiqueQuantity-{{ section.id }}">
-              QUANTITY
-            </label>
-
-            <div class="boutique-product__quantity">
-
-              <button
-                type="button"
-                data-quantity-minus
-                aria-label="Decrease quantity"
-              >
-                −
-              </button>
-
-              <input
-                id="BoutiqueQuantity-{{ section.id }}"
-                type="number"
-                name="quantity"
-                value="1"
-                min="1"
-                inputmode="numeric"
-              >
-
-              <button
-                type="button"
-                data-quantity-plus
-                aria-label="Increase quantity"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <!-- ADD TO CART -->
-
-          <button
-            type="submit"
-            class="boutique-product__add"
-            data-add-to-cart
-            {% unless current_variant.available %}
-              disabled
-            {% endunless %}
-          >
-
-            <span data-add-to-cart-text>
-              {% if current_variant.available %}
-                ADD TO CART
-              {% else %}
-                SOLD OUT
-              {% endif %}
-            </span>
-
-            <span data-add-to-cart-price>
-              {{ current_variant.price | money }}
-            </span>
-
-          </button>
-
-
-          {% render
-            'wishlist-button',
-            product: product,
-            show_text: true
-          %}
-
-
-          {% if section.settings.show_dynamic_checkout %}
-
-            <div class="boutique-product__buy-now">
-              {{ form | payment_button }}
-            </div>
-
-          {% endif %}
-
-        {% endform %}
-
-
-        <!-- BENEFITS -->
-
-        <div class="boutique-product__mini-benefits">
-
-          <div>
-            <span>◇</span>
-
-            <p>
-              <strong>Secure checkout</strong>
-              <small>Protected payments</small>
-            </p>
-          </div>
-
-          <div>
-            <span>↺</span>
-
-            <p>
-              <strong>Easy returns</strong>
-              <small>Simple return process</small>
-            </p>
-          </div>
-
-        </div>
-
-
-        <!-- ACCORDIONS -->
-
-        <div class="boutique-product__accordions">
-
-          {% if section.settings.shipping_text != blank %}
-
-            <details>
-
-              <summary>
-                SHIPPING
-                <span>+</span>
-              </summary>
-
-              <div>
-                {{ section.settings.shipping_text }}
               </div>
 
-            </details>
 
-          {% endif %}
+            {% when 'custom_liquid' %}
 
-
-          {% if section.settings.returns_text != blank %}
-
-            <details>
-
-              <summary>
-                RETURNS
-                <span>+</span>
-              </summary>
-
-              <div>
-                {{ section.settings.returns_text }}
+              <div
+                class="boutique-product__custom-liquid"
+                {{ block.shopify_attributes }}
+              >
+                {{ block.settings.custom_liquid }}
               </div>
 
-            </details>
 
-          {% endif %}
+          {% endcase %}
 
-
-          {% if section.settings.care_text != blank %}
-
-            <details>
-
-              <summary>
-                CARE & MATERIALS
-                <span>+</span>
-              </summary>
-
-              <div>
-                {{ section.settings.care_text }}
-              </div>
-
-            </details>
-
-          {% endif %}
-
-        </div>
+        {% endfor %}
 
       </div>
 
@@ -2046,12 +2113,6 @@
   "name": "Boutique product",
 
   "settings": [
-
-    {
-      "type": "header",
-      "content": "Product information"
-    },
-
     {
       "type": "checkbox",
       "id": "show_breadcrumb",
@@ -2060,26 +2121,9 @@
     },
 
     {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "label": "Show vendor",
-      "default": false
+      "type": "header",
+      "content": "Inventory"
     },
-
-    {
-      "type": "checkbox",
-      "id": "show_sku",
-      "label": "Show SKU",
-      "default": false
-    },
-
-    {
-      "type": "checkbox",
-      "id": "show_inventory",
-      "label": "Show inventory status",
-      "default": true
-    },
-
     {
       "type": "range",
       "id": "low_stock_threshold",
@@ -2090,86 +2134,180 @@
       "default": 5
     },
 
-
     {
       "type": "header",
       "content": "Size guide"
     },
-
     {
       "type": "page",
       "id": "size_guide_page",
       "label": "Size guide page"
     },
 
-
-    {
-      "type": "header",
-      "content": "Checkout"
-    },
-
-    {
-      "type": "checkbox",
-      "id": "show_dynamic_checkout",
-      "label": "Show Buy it now button",
-      "default": true
-    },
-
-
-    {
-      "type": "header",
-      "content": "Product details"
-    },
-
-    {
-      "type": "richtext",
-      "id": "shipping_text",
-      "label": "Shipping information",
-      "default": "<p>Orders are carefully prepared and dispatched as quickly as possible.</p>"
-    },
-
-    {
-      "type": "richtext",
-      "id": "returns_text",
-      "label": "Returns information",
-      "default": "<p>Returns are accepted according to the store's return policy.</p>"
-    },
-
-    {
-      "type": "richtext",
-      "id": "care_text",
-      "label": "Care and materials",
-      "default": "<p>Refer to the product care label for specific washing and care instructions.</p>"
-    },
-
-
     {
       "type": "header",
       "content": "Colors"
     },
-
     {
       "type": "color",
       "id": "background_color",
       "label": "Background",
       "default": "#FFFFFF"
     },
-
     {
       "type": "color",
       "id": "text_color",
       "label": "Text",
       "default": "#171717"
     },
-
     {
       "type": "color",
       "id": "border_color",
       "label": "Borders",
       "default": "#DEDAD4"
     }
-
   ],
+
+  "blocks": [
+    {
+      "type": "@app"
+    },
+
+    {
+      "type": "vendor",
+      "name": "Vendor",
+      "limit": 1
+    },
+
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+
+    {
+      "type": "sku",
+      "name": "SKU",
+      "limit": 1
+    },
+
+    {
+      "type": "inventory",
+      "name": "Inventory status",
+      "limit": 1
+    },
+
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+
+    {
+      "type": "variant_picker",
+      "name": "Variant picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_size_guide",
+          "label": "Show size guide",
+          "default": true
+        }
+      ]
+    },
+
+    {
+      "type": "quantity_selector",
+      "name": "Quantity selector",
+      "limit": 1
+    },
+
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "label": "Show Buy it now button",
+          "default": true
+        }
+      ]
+    },
+
+    {
+      "type": "benefits",
+      "name": "Benefits",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "benefit_1_heading",
+          "label": "First heading",
+          "default": "Secure checkout"
+        },
+        {
+          "type": "text",
+          "id": "benefit_1_text",
+          "label": "First text",
+          "default": "Protected payments"
+        },
+        {
+          "type": "text",
+          "id": "benefit_2_heading",
+          "label": "Second heading",
+          "default": "Easy returns"
+        },
+        {
+          "type": "text",
+          "id": "benefit_2_text",
+          "label": "Second text",
+          "default": "Simple return process"
+        }
+      ]
+    },
+
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "DETAILS"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Add product information here.</p>"
+        }
+      ]
+    },
+
+    {
+      "type": "custom_liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "Custom Liquid"
+        }
+      ]
+    }
+  ],
+
+  "max_blocks": 20,
 
   "disabled_on": {
     "groups": [
