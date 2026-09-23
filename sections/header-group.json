@@ -15,7 +15,7 @@
       "type": "header",
       "settings": {
         "show_announcement": true,
-        "announcement_text": "COMPLIMENTARY SHIPPING ON ORDERS OVER ₹1,999",
+        "announcement_text": "COMPLIMENTARY SHIPPING AVAILABLE",
         "announcement_link": "",
         "announcement_background": "#292929",
         "announcement_text_color": "#ffffff",
@@ -25,7 +25,7 @@
         "menu": "main-menu",
         "customer_account_menu": "customer-account-main-menu",
         "show_search": true,
-        "show_wishlist_icon": true,
+        "show_wishlist_icon": false,
         "sticky_header": true,
         "background_color": "#ffffff",
         "text_color": "#151515"

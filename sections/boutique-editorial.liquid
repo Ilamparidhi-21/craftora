@@ -47,9 +47,11 @@
         </div>
       {% endif %}
 
-      {% if section.settings.button_text != blank %}
+      {% if section.settings.button_text != blank
+        and section.settings.button_link != blank
+      %}
         <a
-          href="{{ section.settings.button_link | default: '#' }}"
+          href="{{ section.settings.button_link }}"
           class="boutique-editorial__button"
         >
           {{ section.settings.button_text }}

@@ -18,11 +18,18 @@
 
       {% for block in section.blocks %}
 
-        <a
-          href="{{ block.settings.link | default: '#' }}"
-          class="boutique-category"
-          {{ block.shopify_attributes }}
-        >
+        {% if block.settings.link != blank %}
+          <a
+            href="{{ block.settings.link }}"
+            class="boutique-category"
+            {{ block.shopify_attributes }}
+          >
+        {% else %}
+          <div
+            class="boutique-category"
+            {{ block.shopify_attributes }}
+          >
+        {% endif %}
 
           <div class="boutique-category__image">
 
@@ -63,7 +70,11 @@
 
           </div>
 
-        </a>
+        {% if block.settings.link != blank %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
 
       {% endfor %}
 

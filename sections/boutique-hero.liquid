@@ -35,18 +35,22 @@
 
         <div class="boutique-hero__buttons">
 
-          {% if section.settings.button_1_text != blank %}
+          {% if section.settings.button_1_text != blank
+            and section.settings.button_1_link != blank
+          %}
             <a
-              href="{{ section.settings.button_1_link | default: '#' }}"
+              href="{{ section.settings.button_1_link }}"
               class="boutique-button boutique-button--primary"
             >
               {{ section.settings.button_1_text }}
             </a>
           {% endif %}
 
-          {% if section.settings.button_2_text != blank %}
+          {% if section.settings.button_2_text != blank
+            and section.settings.button_2_link != blank
+          %}
             <a
-              href="{{ section.settings.button_2_link | default: '#' }}"
+              href="{{ section.settings.button_2_link }}"
               class="boutique-button boutique-button--secondary"
             >
               {{ section.settings.button_2_text }}
