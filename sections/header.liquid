@@ -226,11 +226,16 @@
       {% endif %}
 
 
-      {% if section.settings.show_wishlist_icon
-        and settings.wishlist_page != blank
-      %}
+      {% if section.settings.show_wishlist_icon %}
+
+        {% assign boutique_wishlist_url = '/pages/wishlist?view=wishlist' %}
+
+        {% if settings.wishlist_page != blank %}
+          {% assign boutique_wishlist_url = settings.wishlist_page.url | append: '?view=wishlist' %}
+        {% endif %}
+
         <a
-          href="{{ settings.wishlist_page.url }}"
+          href="{{ boutique_wishlist_url }}"
           class="boutique-icon-button boutique-wishlist"
           aria-label="Wishlist"
           data-wishlist-link

@@ -1,6 +1,8 @@
 {% style %}
 
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
+  {% if settings.type_primary_font != blank %}
+    {{ settings.type_primary_font | font_face: font_display: 'swap' }}
+  {% endif %}
 
   {{ settings.type_primary_font
     | font_modify: 'weight', 'bold'
@@ -12,7 +14,9 @@
     | font_face: font_display: 'swap'
   }}
 
-  {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+  {% if settings.type_heading_font != blank %}
+    {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+  {% endif %}
 
   {{ settings.type_heading_font
     | font_modify: 'weight', 'bold'
@@ -22,8 +26,12 @@
   :root {
 
     --font-body-family:
-      {{ settings.type_primary_font.family }},
-      {{ settings.type_primary_font.fallback_families }};
+      {% if settings.type_primary_font != blank %}
+        {{ settings.type_primary_font.family }},
+        {{ settings.type_primary_font.fallback_families }};
+      {% else %}
+        Arial, Helvetica, sans-serif;
+      {% endif %}
 
     --font-body-style:
       {{ settings.type_primary_font.style }};
@@ -32,8 +40,12 @@
       {{ settings.type_primary_font.weight }};
 
     --font-heading-family:
-      {{ settings.type_heading_font.family }},
-      {{ settings.type_heading_font.fallback_families }};
+      {% if settings.type_heading_font != blank %}
+        {{ settings.type_heading_font.family }},
+        {{ settings.type_heading_font.fallback_families }};
+      {% else %}
+        Georgia, "Times New Roman", serif;
+      {% endif %}
 
     --font-heading-style:
       {{ settings.type_heading_font.style }};
