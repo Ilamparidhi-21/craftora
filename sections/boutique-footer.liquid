@@ -17,10 +17,10 @@
         class="boutique-footer__logo"
       >
 
-        {% if section.settings.logo != blank %}
+        {% if settings.logo != blank %}
 
           {{
-            section.settings.logo
+            settings.logo
             | image_url: width: 500
             | image_tag:
               loading: 'lazy',
@@ -490,171 +490,132 @@
 {% schema %}
 {
   "name": "Boutique footer",
-
   "settings": [
-
     {
       "type": "header",
       "content": "Brand"
     },
-
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo"
-    },
-
     {
       "type": "textarea",
       "id": "tagline",
       "label": "Tagline",
       "default": "Thoughtfully selected fashion for everyday expression."
     },
-
-
     {
       "type": "header",
       "content": "Shop menu"
     },
-
     {
       "type": "text",
       "id": "menu_1_heading",
       "label": "Heading",
       "default": "SHOP"
     },
-
     {
       "type": "link_list",
       "id": "menu_1",
       "label": "Menu"
     },
-
-
     {
       "type": "header",
       "content": "Information menu"
     },
-
     {
       "type": "text",
       "id": "menu_2_heading",
       "label": "Heading",
       "default": "INFORMATION"
     },
-
     {
       "type": "link_list",
       "id": "menu_2",
       "label": "Menu"
     },
-
-
     {
       "type": "header",
       "content": "Contact"
     },
-
     {
       "type": "text",
       "id": "contact_heading",
       "label": "Heading",
       "default": "NEED HELP?"
     },
-
     {
       "type": "richtext",
       "id": "contact_text",
       "label": "Text",
       "default": "<p>Questions about sizing, styling or your order? We're here to help.</p>"
     },
-
     {
       "type": "text",
       "id": "contact_email",
       "label": "Email",
       "default": "hello@example.com"
     },
-
-
     {
       "type": "header",
       "content": "Social media"
     },
-
     {
       "type": "url",
       "id": "instagram_url",
       "label": "Instagram"
     },
-
     {
       "type": "url",
       "id": "facebook_url",
       "label": "Facebook"
     },
-
     {
       "type": "url",
       "id": "pinterest_url",
       "label": "Pinterest"
     },
-
     {
       "type": "url",
       "id": "tiktok_url",
       "label": "TikTok"
     },
-
-
     {
       "type": "header",
       "content": "Bottom bar"
     },
-
     {
       "type": "text",
       "id": "copyright_text",
       "label": "Copyright text",
       "default": "All rights reserved."
     },
-
     {
       "type": "checkbox",
       "id": "show_payment_icons",
       "label": "Show payment icons",
       "default": true
     },
-
-
     {
       "type": "header",
       "content": "Colors"
     },
-
     {
       "type": "color",
       "id": "background_color",
       "label": "Background",
       "default": "#171717"
     },
-
     {
       "type": "color",
       "id": "text_color",
       "label": "Text",
       "default": "#F5F1EA"
     },
-
     {
       "type": "color",
       "id": "border_color",
       "label": "Border",
       "default": "#3A3A3A"
     }
-
   ],
-
   "presets": [
     {
       "name": "Boutique footer"

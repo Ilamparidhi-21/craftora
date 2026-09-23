@@ -13,12 +13,12 @@
       {
         "type": "image_picker",
         "id": "logo",
-        "label": "Logo"
+        "label": "Store logo"
       },
       {
         "type": "range",
         "id": "logo_width",
-        "label": "Logo width",
+        "label": "Header logo width",
         "min": 80,
         "max": 300,
         "step": 10,
