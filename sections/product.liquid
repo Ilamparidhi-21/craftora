@@ -43,13 +43,25 @@
 
         {% if product.featured_image %}
 
+          {% assign boutique_main_image = current_variant.featured_image | default: product.featured_image %}
+
           <img
             id="BoutiqueMainImage-{{ section.id }}"
-            src="{{ current_variant.featured_image | default: product.featured_image | image_url: width: 1800 }}"
-            alt="{{ current_variant.featured_image.alt | default: product.featured_image.alt | default: product.title | escape }}"
+            src="{{ boutique_main_image | image_url: width: 1200 }}"
+            srcset="
+              {{ boutique_main_image | image_url: width: 480 }} 480w,
+              {{ boutique_main_image | image_url: width: 720 }} 720w,
+              {{ boutique_main_image | image_url: width: 960 }} 960w,
+              {{ boutique_main_image | image_url: width: 1200 }} 1200w,
+              {{ boutique_main_image | image_url: width: 1600 }} 1600w,
+              {{ boutique_main_image | image_url: width: 1800 }} 1800w
+            "
+            sizes="(min-width: 951px) 52vw, (min-width: 768px) 50vw, 100vw"
+            alt="{{ boutique_main_image.alt | default: product.title | escape }}"
             width="1800"
             height="2400"
             loading="eager"
+            fetchpriority="high"
           >
 
         {% else %}
@@ -71,7 +83,8 @@
               type="button"
               class="boutique-product__thumbnail{% if image.id == current_variant.featured_image.id or image.id == product.featured_image.id and current_variant.featured_image == blank %} is-active{% endif %}"
               data-image-id="{{ image.id }}"
-              data-image-url="{{ image | image_url: width: 1800 }}"
+              data-image-url="{{ image | image_url: width: 1200 }}"
+              data-image-srcset="{{ image | image_url: width: 480 }} 480w, {{ image | image_url: width: 720 }} 720w, {{ image | image_url: width: 960 }} 960w, {{ image | image_url: width: 1200 }} 1200w, {{ image | image_url: width: 1600 }} 1600w, {{ image | image_url: width: 1800 }} 1800w"
               data-image-alt="{{ image.alt | default: product.title | escape }}"
               aria-label="View image {{ forloop.index }}"
             >
@@ -1355,6 +1368,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       mainImage.src =
         thumbnail.dataset.imageUrl;
+
+      if (thumbnail.dataset.imageSrcset) {
+        mainImage.srcset =
+          thumbnail.dataset.imageSrcset;
+      }
 
       mainImage.alt =
         thumbnail.dataset.imageAlt || '';
