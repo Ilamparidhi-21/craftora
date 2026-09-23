@@ -1337,12 +1337,40 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
 
-  const productSection =
-    document.getElementById('BoutiqueProduct-{{ section.id }}');
+  function initBoutiqueProduct(root) {
 
-  if (!productSection) return;
+    const selector =
+      '#BoutiqueProduct-{{ section.id }}';
+
+    let productSection = null;
+
+    if (
+      root &&
+      root.matches &&
+      root.matches(selector)
+    ) {
+      productSection = root;
+    } else if (
+      root &&
+      root.querySelector
+    ) {
+      productSection =
+        root.querySelector(selector);
+    }
+
+    if (!productSection) return;
+
+    if (
+      productSection.dataset.boutiqueInitialized ===
+      'true'
+    ) {
+      return;
+    }
+
+    productSection.dataset.boutiqueInitialized =
+      'true';
 
 
   /* ==============================
@@ -1949,7 +1977,60 @@ document.addEventListener('DOMContentLoaded', function () {
 
   }
 
-});
+
+  }
+
+
+  function bootBoutiqueProduct(root) {
+    initBoutiqueProduct(root || document);
+  }
+
+
+  if (document.readyState === 'loading') {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      function () {
+        bootBoutiqueProduct(document);
+      },
+      { once: true }
+    );
+
+  } else {
+
+    bootBoutiqueProduct(document);
+
+  }
+
+
+  const productHandlerKey =
+    'BoutiqueProductSectionLoad-{{ section.id }}';
+
+
+  if (window[productHandlerKey]) {
+
+    document.removeEventListener(
+      'shopify:section:load',
+      window[productHandlerKey]
+    );
+
+  }
+
+
+  window[productHandlerKey] =
+    function (event) {
+
+      bootBoutiqueProduct(event.target);
+
+    };
+
+
+  document.addEventListener(
+    'shopify:section:load',
+    window[productHandlerKey]
+  );
+
+})();
 </script>
 
 

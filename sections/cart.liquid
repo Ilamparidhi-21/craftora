@@ -1344,14 +1344,40 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
 
-  const cartSection =
-    document.getElementById(
-      'BoutiqueCart-{{ section.id }}'
-    );
+  function initBoutiqueCart(root) {
 
-  if (!cartSection) return;
+    const selector =
+      '#BoutiqueCart-{{ section.id }}';
+
+    let cartSection = null;
+
+    if (
+      root &&
+      root.matches &&
+      root.matches(selector)
+    ) {
+      cartSection = root;
+    } else if (
+      root &&
+      root.querySelector
+    ) {
+      cartSection =
+        root.querySelector(selector);
+    }
+
+    if (!cartSection) return;
+
+    if (
+      cartSection.dataset.boutiqueInitialized ===
+      'true'
+    ) {
+      return;
+    }
+
+    cartSection.dataset.boutiqueInitialized =
+      'true';
 
 
   cartSection
@@ -1407,7 +1433,60 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-});
+
+  }
+
+
+  function bootBoutiqueCart(root) {
+    initBoutiqueCart(root || document);
+  }
+
+
+  if (document.readyState === 'loading') {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      function () {
+        bootBoutiqueCart(document);
+      },
+      { once: true }
+    );
+
+  } else {
+
+    bootBoutiqueCart(document);
+
+  }
+
+
+  const cartHandlerKey =
+    'BoutiqueCartSectionLoad-{{ section.id }}';
+
+
+  if (window[cartHandlerKey]) {
+
+    document.removeEventListener(
+      'shopify:section:load',
+      window[cartHandlerKey]
+    );
+
+  }
+
+
+  window[cartHandlerKey] =
+    function (event) {
+
+      bootBoutiqueCart(event.target);
+
+    };
+
+
+  document.addEventListener(
+    'shopify:section:load',
+    window[cartHandlerKey]
+  );
+
+})();
 </script>
 
 
